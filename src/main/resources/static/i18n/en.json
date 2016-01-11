@@ -1,0 +1,74 @@
+{
+    "lang":
+    {
+        "lang" : "Language",
+        "german" : "german",
+        "english" : "english",
+        "lang_de": "Lang: German",
+        "lang_en": "Lang: English"
+    },
+
+    "header":
+    {
+        "app_name" : "CryptoOne",
+        "home"     : "Home"
+    },
+
+    "action":
+    {
+        "sign-in"  : "sign-in",
+        "sign-up"  : "sign-up",
+        "exit"     : "exit",
+        "show"     : "show",
+        "delete"   : "delete",
+        "upload"   : "upload",
+        "download" : "download",
+        "share"    : "share",
+        "remove"   : "remove",
+        "add"      : "add"
+    },
+
+    "common":
+    {
+        "name":{
+            "user"       : "user",
+            "group"      : "group",
+            "file"       : "file",
+            "key"        : "key",
+            "error"      : "error",
+            "account"    : "account",
+            "email"      : "email",
+            "friend"     : "friend",
+            "local"      : "local",
+            "firstname"  : "firstname",
+            "secondname" : "secondname",
+            "tel_number" : "cellphon-number",
+            "list"       : "list",
+            "empty"      : "empty",
+            "signature"  : "signature",
+            "password"   : "password",
+            "role"       : "role",
+            "date"       : "date",
+            "document"   : "document",
+            "documents"  : "documents",
+            "member"     : "member",
+            "members"    : "members"
+        },
+
+
+        "composition":{
+            "local_server"        : "local server",
+            "remote_server"       : "remote server",
+            "untrusted_user"      : "untrusted users",
+            "trusted_user"        : "trusted users",
+            "common_trusted_user" : "common trusted user",
+            "upload_date"         : "upload-date",
+            "last_modified"       : "last modified",
+            "shared_files"        : "shared files"
+        }
+
+    }
+
+
+}
+

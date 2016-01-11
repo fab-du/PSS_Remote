@@ -1,0 +1,58 @@
+<div ng-controller="userController" class="container-fluid row">
+<h1> {{ 'common.name.user' | translate }} </h1>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+            <button class="btn btn-success"><span class="glyphicon glyphicon-search" ></span> Find user </button>  
+            <button class="btn btn-success"><span class="glyphicon glyphicon-search" ></span> Friends of Friends </button>  
+            <button class="btn btn-success"><span class="glyphicon glyphicon-search" ></span> Relevant User </button>  
+            <button class="btn btn-success"><span class="glyphicon glyphicon-search" ></span> GV User </button>  
+    </div>
+
+    <div class="panel-body">
+        <ui-view id="mainid"></ui-view>
+    </div>
+</div>
+
+
+    <div class="table-responsive col-md-8">
+        <h2>Friend List</h2> 
+        <table data-click-to-select="true" data-toggle="table" class="table table-bordered table-striped">
+            <thead>
+                <tr class="info">
+                    <th data-halign="center">index</th>
+                    <th data-halign="center">{{ 'common.name.firstname' | translate }} </th>
+                    <th data-halign="center">{{ 'common.name.secondname' | translate }} </th>
+                    <th data-halign="center">{{ 'common.name.email' | translate }} </th>
+                </tr>
+            </thead>
+            <tbody>
+            	<tr ng-repeat="user in users">
+                    <td data-align="center">{{user.id}}</td>
+                    <td data-align="center">{{user.firstname}}</td>
+                    <td data-align="center">{{user.secondname}}</td>
+                    <td data-align="center">{{user.email}}    </td>
+
+                    <!--
+                       -here we defined some control elements to oper on single
+                       -item
+                    -->
+                    <td style="text-align: left; width:150px" > 
+                        <a class="btn btn-danger" ng-click="remove( user, {{user.id}} )" ><span class="glyphicon glyphicon-minus" ></span></a>  
+                            <a class="btn btn-info"><span class="glyphicon glyphicon-pencil" ></span></a>
+                            <a class="btn btn-warning" ui-sref=".details({ userId : {{user.id}} } )"><span class="glyphicon glyphicon-eye-open"></span> </a>
+
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="container-fluid pull-right col-md-4">
+        <ui-view>
+        </ui-view>
+    </div>
+
+</div>
