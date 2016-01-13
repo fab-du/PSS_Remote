@@ -50,7 +50,6 @@ public class ControllerDocument {
 	}
 
 
-
 	@RequestMapping( value="/addDocument", method= RequestMethod.POST )
 	public @ResponseBody
 	void uploadDocumentToGroup( HttpServletRequest request, HttpServletResponse response ) throws IOException, ServletException

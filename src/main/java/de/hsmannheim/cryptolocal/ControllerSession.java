@@ -3,7 +3,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.activation.MailcapCommandMap;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
 import de.hsmannheim.cryptolocal.models.forms.*;
+import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceUser;
 
 @RestController
@@ -24,16 +27,16 @@ public class ControllerSession {
 
 	@Autowired
 	ServiceUser serviceuser;
+	
+	@Autowired
+	ServiceSession serviceSession;
 
 
 	@RequestMapping( value="/login/challenge", method = RequestMethod.POST, consumes="application/json" )
 	
 	public ResponseEntity<Map<String, String>> login_challenge( @RequestBody Map<String, String> email  ){
-
-
-		//System.out.print(  );
+		
 		boolean userExist = serviceuser.usereExists(email.get("email"));
-
 		if( userExist == true ){
 			 Map<String, String> result = new HashMap<String, String>();
 
@@ -68,14 +71,14 @@ public class ControllerSession {
 	@RequestMapping( value="/register", method = RequestMethod.POST )
 	public ResponseEntity<LinkedHashMap<String, String>> 
 	register( @RequestBody Map<String, String> newregister ) throws RestClientException, Exception{
-
-			boolean ret = serviceuser.register(newregister);
+			boolean ret = serviceSession.register(newregister);
 			if ( ret ) return new ResponseEntity<LinkedHashMap<String,String>>( HttpStatus.CREATED );
 			return new ResponseEntity<LinkedHashMap<String,String>>( HttpStatus.OK );
 	}
 
 	@RequestMapping( value="/logout", method = RequestMethod.POST )
-	public void logout( @RequestBody FormMisc misc ){
-		
+	public ResponseEntity<LinkedHashMap<String, String>> 
+	logout(){
+		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 }

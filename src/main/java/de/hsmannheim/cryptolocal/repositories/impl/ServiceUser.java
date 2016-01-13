@@ -46,71 +46,27 @@ public class ServiceUser  {
 
 	 SRP6ServerSession  srpSession;
 
-	@Autowired
-	private RepositoryUsers repositoryuser;
 
-	@Autowired
-	private RepositoryKeyPair repositorykeypair;
+		@Autowired
+		private RepositoryUsers repositoryuser;
+
 
 	@Autowired
 	private RepositoryCredential repositorycredential;
 
 	@Autowired
 	private RepositorySession repositorysession;
-
-	@Autowired
-	private RepositoryGroup repositorygroup;
-	@Autowired
-	private RepositoryKeysym repositorykeysym;
-
+	
 	@Autowired
 	RepositorySrpCredential repositorysrpcredential;
+
+
+
 
 	@Autowired
 	ServiceGroup servicegroup;
 	
-	public boolean register( Map<String, String> user){
 
-		User existinguser = repositoryuser.findOneByEmail(user.get("email"));
-
-		if( existinguser != null  ){
-			return false;
-		}
-
-		User newuser = new User();
-		newuser.setCompany( user.get("company"));
-		newuser.setFirstname(user.get("firstname"));
-		newuser.setSecondname(user.get("secondname"));
-		newuser.setEmail( user.get("email"));
-
-		repositoryuser.save(newuser);
-
-
-		KeyPair keytosave = new KeyPair();
-		keytosave.setPrikey(user.get("prikey"));
-		keytosave.setPubkey(user.get("pubkey"));
-		keytosave.setSalt(user.get("pairkeySalt"));
-		
- 		repositorykeypair.save( keytosave );
-
- 		newuser = repositoryuser.findOneByEmail(user.get("email"));
- 		/* set key pair */
- 		newuser.setKeypair(keytosave);
-
-
- 		if( user.get("salt") != null && user.get("verifier") != null ){
- 			 SrpCredential srpcredentials = new SrpCredential( user.get("email"),  user.get("salt"), user.get("verifier"), "user" );
-			 repositorysrpcredential.save(srpcredentials);
-			 newuser.setSrp(srpcredentials);
-			 repositoryuser.save(newuser);
- 		}
-
-		Group group = new Group();
-		group.setName( user.get("firstname") + "_private_group");
- 		//servicegroup.save(group, newuser.getId(), true);
-
-		return true;
-	}
 
 	public boolean userExists( Long userId ){
 		return repositoryuser.exists( userId );
@@ -163,7 +119,7 @@ public class ServiceUser  {
           try {
 				  evidence = srpSession.step2( new BigInteger(A) , new BigInteger(M1) );
 				  result.put("evidence",  evidence.toString());
-				  this.saveSession(authdata, response );
+				 // this.saveSession(authdata, response );
 				  HttpHeaders responseHeaders = this.buildHeader(authdata, response);
 				  boolean ret = responseHeaders.containsKey("Client_pubkey");
 				  System.out.println(ret);
@@ -178,18 +134,7 @@ public class ServiceUser  {
 
 	}
 
-	private void saveSession( Map<String, String> sessionData, HttpServletResponse response ){
-		Session session = new Session();
-		session.setEmail(sessionData.get("email"));
-		session.setB(sessionData.get("B"));
-		session.setExpires_in(3600);
-		session.setAccess_token(new BigInteger(SRP6VerifierGenerator.generateRandomSalt()).toString() );
-		session.setClient_pubkey(sessionData.get("client_pubkey"));
 
-
-		//set session 
-		repositorysession.save(session);
-	}
 
 	private HttpHeaders buildHeader(  Map<String, String> sessionData, HttpServletResponse response ){
 		HttpHeaders responseHeaders = new HttpHeaders();

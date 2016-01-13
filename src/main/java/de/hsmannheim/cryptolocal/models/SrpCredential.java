@@ -18,11 +18,9 @@ public class SrpCredential extends AbstEntity {
 	}
 
 	
-
 	public SrpCredential() {
 		super();
 	}
-
 
 
 	private String email;

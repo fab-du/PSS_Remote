@@ -8,70 +8,65 @@ import org.hibernate.annotations.Type;
 public class Session extends  AbstEntity {
 
 	String email;
-	
 	@Type(type="text")
 	String B;
-
 	@Type(type="text")
-	String xsrf_token;
-
+	String xsrfToken;
 	@Type(type="text")
-	String client_pubkey;
-
+	String clientPubkey;
 	@Type(type="text")
-	String server_pubkey;
-
-	String header_authorization; 
-
+	String serverPubkey;
+	String headerAuthorization; 
 	@Type(type="text")
-	String www_authenticate; 
-
+	String wwwAuthenticate; 
 	@Type(type="text")
 	String salt;
-
 	String hash_algorithm;  /* sha256 */
-	String token_type; /* Bearer */
-
+	String tokenType; /* Bearer */
 	@Type(type="text")
-	String access_token;
-	int expires_in;
-
+	String accessToken;
+	int expiresIn;
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public String getB() {
 		return B;
 	}
 	public void setB(String b) {
 		B = b;
 	}
-	public String getXsrf_token() {
-		return xsrf_token;
+	public String getXsrfToken() {
+		return xsrfToken;
 	}
-	public void setXsrf_token(String xsrf_token) {
-		this.xsrf_token = xsrf_token;
+	public void setXsrfToken(String xsrfToken) {
+		this.xsrfToken = xsrfToken;
 	}
-	public String getClient_pubkey() {
-		return client_pubkey;
+	public String getClientPubkey() {
+		return clientPubkey;
 	}
-	public void setClient_pubkey(String client_pubkey) {
-		this.client_pubkey = client_pubkey;
+	public void setClientPubkey(String clientPubkey) {
+		this.clientPubkey = clientPubkey;
 	}
-	public String getServer_pubkey() {
-		return server_pubkey;
+	public String getServerPubkey() {
+		return serverPubkey;
 	}
-	public void setServer_pubkey(String server_pubkey) {
-		this.server_pubkey = server_pubkey;
+	public void setServerPubkey(String serverPubkey) {
+		this.serverPubkey = serverPubkey;
 	}
-
-	public String getHeader_authorization() {
-		return header_authorization;
+	public String getHeaderAuthorization() {
+		return headerAuthorization;
 	}
-	public void setHeader_authorization(String header_authorization) {
-		this.header_authorization = header_authorization;
+	public void setHeaderAuthorization(String headerAuthorization) {
+		this.headerAuthorization = headerAuthorization;
 	}
-	public String getWww_authenticate() {
-		return www_authenticate;
+	public String getWwwAuthenticate() {
+		return wwwAuthenticate;
 	}
-	public void setWww_authenticate(String www_authenticate) {
-		this.www_authenticate = www_authenticate;
+	public void setWwwAuthenticate(String wwwAuthenticate) {
+		this.wwwAuthenticate = wwwAuthenticate;
 	}
 	public String getSalt() {
 		return salt;
@@ -85,41 +80,24 @@ public class Session extends  AbstEntity {
 	public void setHash_algorithm(String hash_algorithm) {
 		this.hash_algorithm = hash_algorithm;
 	}
-	public String getToken_type() {
-		return token_type;
+	public String getTokenType() {
+		return tokenType;
 	}
-	public void setToken_type(String token_type) {
-		this.token_type = token_type;
+	public void setTokenType(String tokenType) {
+		this.tokenType = tokenType;
 	}
-	public String getAccess_token() {
-		return access_token;
+	public String getAccessToken() {
+		return accessToken;
 	}
-	public void setAccess_token(String access_token) {
-		this.access_token = access_token;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
-	public int getExpires_in() {
-		return expires_in;
+	public int getExpiresIn() {
+		return expiresIn;
 	}
-	public void setExpires_in(int expires_in) {
-		this.expires_in = expires_in;
+	public void setExpiresIn(int expiresIn) {
+		this.expiresIn = expiresIn;
 	}
-
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	
-	@Override
-	public String toString() {
-		return "Session [email=" + email + ", B=" + B + ", xsrf_token=" + xsrf_token + ", client_pubkey="
-				+ client_pubkey + ", server_pubkey=" + server_pubkey + ", header_authorization=" + header_authorization
-				+ ", www_authenticate=" + www_authenticate + ", salt=" + salt + ", hash_algorithm=" + hash_algorithm
-				+ ", token_type=" + token_type + ", access_token=" + access_token + ", expires_in=" + expires_in + "]";
-	}
-
-
 
 	
 }
