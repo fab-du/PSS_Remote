@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,9 @@ import de.hsmannheim.cryptolocal.repositories.RepositoryKeyPair;
 import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 
 @Service
 @Transactional
@@ -34,6 +38,9 @@ public class ServiceSession {
 
 	@Autowired
 	private RepositorySession repositorysession;
+	
+	private final static Logger log = LoggerFactory.getLogger( ServiceSession.class);
+	public static final int SCHEDULE_TIME = 36000; 
 
 
 	public boolean userExists( Long userId ){
@@ -87,15 +94,37 @@ public class ServiceSession {
 		Session session = new Session();
 		session.setEmail(sessionData.get("email"));
 		session.setB(sessionData.get("B"));
-		session.setExpiresIn(3600);
+		session.setExpiresIn(System.currentTimeMillis());
 		session.setAccessToken(new BigInteger(SRP6VerifierGenerator.generateRandomSalt()).toString() );
 		session.setClientPubkey(sessionData.get("client_pubkey"));
 		repositorysession.save(session);
 	}
 	
+	protected boolean isExpired( Long expireIn  ){
+		Long currentTimeMilli = System.currentTimeMillis();
+		return ( expireIn <= currentTimeMilli );
+	}
+	
+	public void deletEpiredSession(){
+		Iterable<Session> activeSessions = repositorysession.findAll();
+
+		for (Session session : activeSessions) {
+				Long expire_in = session.getExpiresIn();
+
+				if( this.isExpired(expire_in) ){
+					repositorysession.delete(session.getId());
+				}
+		}
+	}
+	
+	@Scheduled(fixedRate= SCHEDULE_TIME)
+	public void removeExpiredSession(){
+		log.info("remove expired token from database");
+		this.deletEpiredSession();
+	}
+	
 	public boolean isAuthenticate( String token ){
-		boolean ret = false;
-		
+		boolean ret = false;		
 		return ret; 
 	}
 	

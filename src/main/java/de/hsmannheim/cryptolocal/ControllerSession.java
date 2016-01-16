@@ -33,10 +33,11 @@ public class ControllerSession {
 
 
 	@RequestMapping( value="/login/challenge", method = RequestMethod.POST, consumes="application/json" )
-	
 	public ResponseEntity<Map<String, String>> login_challenge( @RequestBody Map<String, String> email  ){
 		
 		boolean userExist = serviceuser.usereExists(email.get("email"));
+		
+		System.out.println(userExist);
 		if( userExist == true ){
 			 Map<String, String> result = new HashMap<String, String>();
 
@@ -60,9 +61,11 @@ public class ControllerSession {
 		Map<String, String > result = null;
 
 		try {
-			return serviceuser.step2( authdata, response );
+			ResponseEntity<Map<String, String>> ret =  serviceuser.step2( authdata, response );
+			return ret;
 		} catch (Exception e) {
 			Map<String, String> errorMessage = new HashMap<String, String>();
+			errorMessage.put("AUTH_ERROR", "Authentication failure");
 			return new ResponseEntity<Map<String,String>>( errorMessage, HttpStatus.FORBIDDEN );
 		}
 

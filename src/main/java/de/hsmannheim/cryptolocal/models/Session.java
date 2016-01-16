@@ -25,7 +25,7 @@ public class Session extends  AbstEntity {
 	String tokenType; /* Bearer */
 	@Type(type="text")
 	String accessToken;
-	int expiresIn;
+	Long expiresIn;
 	public String getEmail() {
 		return email;
 	}
@@ -92,11 +92,11 @@ public class Session extends  AbstEntity {
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	public int getExpiresIn() {
+	public Long getExpiresIn() {
 		return expiresIn;
 	}
-	public void setExpiresIn(int expiresIn) {
-		this.expiresIn = expiresIn;
+	public void setExpiresIn(Long l) {
+		this.expiresIn = l;
 	}
 
 	
