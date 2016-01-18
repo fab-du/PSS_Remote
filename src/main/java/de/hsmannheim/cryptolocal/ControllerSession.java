@@ -3,23 +3,24 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.activation.MailcapCommandMap;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
-import de.hsmannheim.cryptolocal.models.forms.*;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceUser;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.RsaSigner;
+import java.security.Key;
 
 @RestController
 @RequestMapping(value="/session")

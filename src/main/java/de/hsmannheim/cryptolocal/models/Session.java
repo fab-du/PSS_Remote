@@ -16,13 +16,11 @@ public class Session extends  AbstEntity {
 	String clientPubkey;
 	@Type(type="text")
 	String serverPubkey;
+	@Type(type="text")
+	String serverPrikey;
 	String headerAuthorization; 
 	@Type(type="text")
-	String wwwAuthenticate; 
-	@Type(type="text")
 	String salt;
-	String hash_algorithm;  /* sha256 */
-	String tokenType; /* Bearer */
 	@Type(type="text")
 	String accessToken;
 	Long expiresIn;
@@ -62,30 +60,14 @@ public class Session extends  AbstEntity {
 	public void setHeaderAuthorization(String headerAuthorization) {
 		this.headerAuthorization = headerAuthorization;
 	}
-	public String getWwwAuthenticate() {
-		return wwwAuthenticate;
-	}
-	public void setWwwAuthenticate(String wwwAuthenticate) {
-		this.wwwAuthenticate = wwwAuthenticate;
-	}
+
 	public String getSalt() {
 		return salt;
 	}
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
-	public String getHash_algorithm() {
-		return hash_algorithm;
-	}
-	public void setHash_algorithm(String hash_algorithm) {
-		this.hash_algorithm = hash_algorithm;
-	}
-	public String getTokenType() {
-		return tokenType;
-	}
-	public void setTokenType(String tokenType) {
-		this.tokenType = tokenType;
-	}
+
 	public String getAccessToken() {
 		return accessToken;
 	}

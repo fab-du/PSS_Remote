@@ -31,8 +31,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
     	 * and the error have to be log. 
     	 */
     	if ( status >= 500 && status < 600 ){
-    		response.reset();
-    		response.setStatus(200);
+    		//response.reset();
+    		//response.setStatus(200);
     	}
     	
     	System.out.println("POST HAndler");

@@ -11,14 +11,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.service.spi.SessionFactoryServiceInitiator;
+import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.RsaProvider;
+import io.jsonwebtoken.impl.crypto.RsaSigner;
+import scala.annotation.meta.getter;
+
+import java.security.Key;
+import java.security.KeyPair;
+
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
-import io.netty.handler.codec.http.HttpResponse;
 
 
 /*
@@ -31,6 +39,40 @@ import io.netty.handler.codec.http.HttpResponse;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class CorsFilter implements Filter {
+	
+	public static final String PROTECTED_URI = "api";
+	
+	public static final String URL = "http://localhost:8080";
+	
+	public static final String CONTENT_SECURITY_POLICY = "content-security-header", 
+							   CONTENT_SECURITY_POLICY_VALUE = "script-src 'self'";
+	
+	public static final String X_XSRF_TOKEN = "X-XSRF-TOKEN";
+	
+	public static final String REALM = "realm", 
+							   REALM_VALUE="realm";
+	
+	public static final String WWW_AUTHENTICATION = "WWW-Authentication";
+	
+	public static final String HASH_ALGORITHM = "hash-algorithm"; 
+	
+	public static final String EXPIRES_IN = "EXPIRES-IN";
+	
+	public static final String CLIENT_PUBLIC_KEY = "CLIENT-PUBLIC-KEY";
+	
+	public static final String SERVER_PUBLIC_KEY = "SERVER-PUBLIC-KEY";
+	
+	public static final String SERVER_PRIVATE_KEY = "SERVER-PRIVATE-KEY";
+
+	
+	public static final String TYP = "typ",
+							   TYP_VALUE = "JWT";
+	
+	public static final String ALG = "alg",
+							   ALG_VALUE = "RS512";
+	
+	public static final String AUTHORIZATION = "Authorization",
+			   AUTHORIZATION_VALUE = "Bearer ";
 	
 	
 	
@@ -46,12 +88,20 @@ class CorsFilter implements Filter {
 		    this.req = request; 
 		    this.res = response;
 		    
+		    
 		    if ( this.isUri("/session/login/challenge")){
-		    	// nothing to do 
-		    	// registration will be handle by controller
+		      	KeyPair serverKey = RsaProvider.generateKeyPair(512);
+		      	String privateKey = Base64.getEncoder().encodeToString( serverKey.getPrivate().getEncoded());
+		      	String publicKey = Base64.getEncoder().encodeToString( serverKey.getPublic().getEncoded());
+		      	response.setHeader(SERVER_PUBLIC_KEY, publicKey);
+		    	response.setHeader(SERVER_PRIVATE_KEY,  privateKey);
 		    }
 		    else if( this.isUri("/session/login/authenticate")){
+		    	if( request.getHeader(SERVER_PUBLIC_KEY) == null ){
+		    		this.redirect(request, response, "/auth_error");
+		    	}
 		    	
+		  
 		    }
 		    else if( this.isUri("/session/register")){
 		    		//nothing todo 
@@ -59,10 +109,10 @@ class CorsFilter implements Filter {
 		    	
 		    }
 		    else if( this.isUri("/session/logout")){
-		    	String access_token = this.req.getHeader("Access-Token");
+		    	String access_token = this.req.getHeader("Authorization");
 		    	
 		    	if( access_token == null || access_token == ""){
-		    		// not authorized 
+		    		this.redirect(this.req, this.res, "/auth_error");
 		    	}
 		    	else if ( access_token != null && access_token != "" ){
 			    	serviceSession.logout( access_token  );
@@ -115,20 +165,16 @@ class CorsFilter implements Filter {
 			  
 			  return ret;
 		  }
+
+			public void redirect( HttpServletRequest request, HttpServletResponse response, String uri ){
+				try {
+					request.getServletContext().getRequestDispatcher(uri).forward(request, response);
+					return;
+				} catch (ServletException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}  
 		  
-		  
-		  void setHeaders( ){
-			    res.setHeader("Access-Control-Allow-Origin", "*");
-			    res.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
-			    res.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-			    res.setHeader("Access-Control-Max-Age", "3600");
-			    res.setHeader("access_token", "TODO");
-			    res.setHeader("token_type", "Bearer");
-			    res.setHeader("refresh_token", "TODO");
-			    
-			    // JWT 
-			    res.setHeader("typ", "JWT");
-			    res.setHeader("alg", "HS256");
-			    res.setHeader("jti", "TODO : jwt headers");
-		  }
 }
