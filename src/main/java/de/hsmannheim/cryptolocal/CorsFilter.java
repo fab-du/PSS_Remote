@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.Base64;
+import java.util.Enumeration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -89,6 +91,22 @@ class CorsFilter implements Filter {
 		    this.res = response;
 		    
 		    
+		    /*
+		     * check authorization header
+		     */
+		    
+		    String authHeader = this.req.getHeader(AUTHORIZATION);
+		    
+		    if(  authHeader == null && !this.matchProtectedUri( request.getRequestURI())){
+		    	this.redirect(request, response, "/auth_error");
+		    	return;
+		    }
+		    
+		    if( this.matchProtectedUri( request.getRequestURI())){
+		    	//authenticate
+		    }
+		    
+
 		    if ( this.isUri("/session/login/challenge")){
 		      	KeyPair serverKey = RsaProvider.generateKeyPair(512);
 		      	String privateKey = Base64.getEncoder().encodeToString( serverKey.getPrivate().getEncoded());
@@ -96,21 +114,15 @@ class CorsFilter implements Filter {
 		      	response.setHeader(SERVER_PUBLIC_KEY, publicKey);
 		    	response.setHeader(SERVER_PRIVATE_KEY,  privateKey);
 		    }
+		    
 		    else if( this.isUri("/session/login/authenticate")){
 		    	if( request.getHeader(SERVER_PUBLIC_KEY) == null ){
 		    		this.redirect(request, response, "/auth_error");
-		    	}
-		    	
-		  
-		    }
-		    else if( this.isUri("/session/register")){
-		    		//nothing todo 
-		    		// will also be handle by controller
-		    	
+		    		return;
+		    	}    	
 		    }
 		    else if( this.isUri("/session/logout")){
-		    	String access_token = this.req.getHeader("Authorization");
-		    	
+		    	String access_token = this.req.getHeader(AUTHORIZATION);   	
 		    	if( access_token == null || access_token == ""){
 		    		this.redirect(this.req, this.res, "/auth_error");
 		    	}
@@ -118,19 +130,6 @@ class CorsFilter implements Filter {
 			    	serviceSession.logout( access_token  );
 		    	}
 		    	else{}
-		    }
-		    else if( this.matchProtectedUri(this.req.getRequestURI()) && !this.req.getRequestURI().trim().equals("/auth_error") ){
-		    	System.out.println(	this.req.getRequestURI());
-		    	System.out.println("comme herer");
-		    	 try {
-					req.getServletContext().getRequestDispatcher("/auth_error").forward(req, res);
-					return;
-				} catch ( ServletException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		    }
 		    else{}
 
@@ -142,6 +141,7 @@ class CorsFilter implements Filter {
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
+		    
 		  }
 
 		  public void init(FilterConfig filterConfig) {}
@@ -157,19 +157,23 @@ class CorsFilter implements Filter {
 		  
 		  public boolean matchProtectedUri( String uri ){
 			  boolean ret = false;
-			  String sessionUri = uri.split("/")[0];
+			  String sessionUri = null; 
+			  
+			  try {
+				  sessionUri= uri.split("/")[0];
+				  if ( !sessionUri.trim().equals("session") )
+					  ret = true;
+			} catch (Exception e) {
+				
+			}			  
+	 
 			  System.out.println( sessionUri );
-			  
-			  if ( !sessionUri.trim().equals("session") )
-				  ret = true;
-			  
 			  return ret;
 		  }
 
 			public void redirect( HttpServletRequest request, HttpServletResponse response, String uri ){
 				try {
 					request.getServletContext().getRequestDispatcher(uri).forward(request, response);
-					return;
 				} catch (ServletException e) {
 					e.printStackTrace();
 				} catch (IOException e) {

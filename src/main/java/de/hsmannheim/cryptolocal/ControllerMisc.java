@@ -19,6 +19,7 @@ public class ControllerMisc {
 	unauthorized(){
 		LinkedHashMap<String, String> response = new LinkedHashMap<>();
 		response.put("error", "not authenticate");
+		System.out.println("default error handler");
 		return new ResponseEntity<>( response, HttpStatus.UNAUTHORIZED ); 
 	}
 	

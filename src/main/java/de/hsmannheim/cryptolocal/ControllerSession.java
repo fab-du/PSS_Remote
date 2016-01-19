@@ -37,9 +37,7 @@ public class ControllerSession {
 	public ResponseEntity<Map<String, String>> login_challenge( @RequestBody Map<String, String> email  ){
 		
 		boolean userExist = serviceuser.usereExists(email.get("email"));
-		
-		System.out.println(userExist);
-		if( userExist == true ){
+			if( userExist == true ){
 			 Map<String, String> result = new HashMap<String, String>();
 
 			 try {
@@ -58,6 +56,7 @@ public class ControllerSession {
 	@RequestMapping( value="/login/authenticate", method = RequestMethod.POST )
 	public ResponseEntity<Map<String, String>> login( @RequestBody Map<String, String> authdata,
 			HttpServletResponse response) throws Exception{
+		System.out.println("authentication");
 
 		Map<String, String > result = null;
 
@@ -65,6 +64,7 @@ public class ControllerSession {
 			ResponseEntity<Map<String, String>> ret =  serviceuser.step2( authdata, response );
 			return ret;
 		} catch (Exception e) {
+			System.out.println("Ehe hier");
 			Map<String, String> errorMessage = new HashMap<String, String>();
 			errorMessage.put("AUTH_ERROR", "Authentication failure");
 			return new ResponseEntity<Map<String,String>>( errorMessage, HttpStatus.FORBIDDEN );

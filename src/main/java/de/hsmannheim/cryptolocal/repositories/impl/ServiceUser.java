@@ -1,6 +1,9 @@
 package de.hsmannheim.cryptolocal.repositories.impl;
 import java.math.BigInteger;
+import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +34,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.RsaSigner;
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 /*
  * crypto
@@ -63,6 +70,20 @@ public class ServiceUser  {
 	ServiceGroup servicegroup;
 	
 
+	public static PrivateKey priKeyFromString( String prikey ){
+		byte prikeybytes[] = Base64.getDecoder().decode( prikey.getBytes() );
+		KeyFactory keyFactory = null;
+		PrivateKey privatekey = null;
+		try {
+			keyFactory = KeyFactory.getInstance("RSA");
+			KeySpec privateKeySpec = new PKCS8EncodedKeySpec(prikeybytes);
+			privatekey = keyFactory.generatePrivate(privateKeySpec);
+		} catch (Exception e) {
+			return null;
+		} 
+
+		return privatekey;
+	}
 
 	public boolean userExists( Long userId ){
 		return repositoryuser.exists( userId );
@@ -111,15 +132,31 @@ public class ServiceUser  {
 
           String A = authdata.get("A");
           String M1 =  authdata.get("M1");
-
+          
+          System.out.println(A);
+          System.out.println(M1);
           try {
 				  evidence = srpSession.step2( new BigInteger(A) , new BigInteger(M1) );
 				  result.put("evidence",  evidence.toString());
-				  HttpHeaders responseHeaders = this.buildHeader(authdata, response);
-				  boolean ret = responseHeaders.containsKey("Client_pubkey");
-				  System.out.println(ret);
-				  System.out.println("\n this is ist");
-				  return new ResponseEntity<Map<String,String>>(result, responseHeaders, HttpStatus.OK);
+				  HttpHeaders responseHeaders = new HttpHeaders();
+
+//				  Collection<String> headers = response.getHeaderNames();
+//				  
+//				  Iterator<String> it = headers.iterator();
+//				  
+//				  while( it.hasNext() ){
+//					  String headername = it.next();
+//					  System.out.println( headername);
+//					  responseHeaders.set(headername, response.getHeader(headername));
+//				  }
+			
+				 String key = response.getHeader("SERVER_PRIVATE_KEY");
+				 PrivateKey _key = ServiceUser.priKeyFromString( key );
+				 String token =  "Bearer " + this.jwt(evidence.toString(), _key);
+				 System.out.println(token);
+				 responseHeaders.set("Authorization", token);
+				
+				 return new ResponseEntity<Map<String,String>>(result, responseHeaders, HttpStatus.OK);
 				  
           	  } catch (Exception e) {
           		  result.put("error", e.getMessage());
@@ -129,17 +166,8 @@ public class ServiceUser  {
 
 	}
 
-
-
-	private HttpHeaders buildHeader(  Map<String, String> sessionData, HttpServletResponse response ){
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("Client_pubkey", sessionData.get("client_pubkey") );
-		responseHeaders.set("Expires", "3600" );
-		responseHeaders.set("Access-Control-Expose-Headers", "Client_pubkey, Expires");
-		return responseHeaders;
-	}
 	
-	private String jwt( String claims, Key key ){
+	private String jwt( String claims, PrivateKey key ){
 		String token = 
 		Jwts.builder().claim("claims", claims).signWith(SignatureAlgorithm.RS512, key ).compact();
 		System.out.println( token );
