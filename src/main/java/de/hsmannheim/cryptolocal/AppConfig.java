@@ -12,7 +12,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addInterceptors( InterceptorRegistry registry ){
-		//registry.addInterceptor(new LocaleChangeInterceptor());
 		registry.addInterceptor( new AuthInterceptor());	
 	}
 }
