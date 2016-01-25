@@ -38,12 +38,15 @@ public class ControllerUser {
 	private ServiceUser userservice;
 
 	@RequestMapping( method= RequestMethod.GET )
-	public ResponseEntity<Iterable<User>> getUsers(){
+	public ResponseEntity<Iterable<User>> find(){
+		return userservice.find();
+	}
+	
+	@RequestMapping( value="/{userId}", method= RequestMethod.GET)
+	public ResponseEntity<User> findOne( @PathVariable(value="userId") Long id){
+		System.out.println("comme here OOOONNNNNEE");
 
-		Iterable<User> users = userservice.getAll();
-		if(users != null && users.iterator().hasNext() ) 
-		  return new ResponseEntity<Iterable<User>>(users, HttpStatus.OK);
-		  return new ResponseEntity<Iterable<User>>(HttpStatus.NO_CONTENT);
+		return userservice.findOne(id);
 	}
 
 	@RequestMapping( method= RequestMethod.POST, consumes= MediaType.APPLICATION_JSON_VALUE )

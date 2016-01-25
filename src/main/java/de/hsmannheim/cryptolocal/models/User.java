@@ -61,8 +61,11 @@ public class User extends AbstEntity{
 	@OneToMany(mappedBy="users", cascade = CascadeType.ALL)
 	@JsonIgnore
 	Set<UserGroup> usergroup = new HashSet<UserGroup>();
-
 	
+	@OneToMany(mappedBy="users", cascade = CascadeType.ALL)
+	@JsonIgnore
+	Set<Friendship> friends = new HashSet<Friendship>();
+
 
 	public String getFirstname() {
 		return firstname;
@@ -129,14 +132,20 @@ public class User extends AbstEntity{
 	public void setSrp(SrpCredential  srp) {
 		this.srp = srp;
 	}
+	
+	
 
+	public Set<Friendship> getFriends() {
+		return friends;
+	}
+	public void setFriends(Set<Friendship> friends) {
+		this.friends = friends;
+	}
+	
 	@Override
 	public String toString() {
 		return "User [firstname=" + firstname + ", secondname=" + secondname + ", company=" + company + ", email="
-				+ email + ", keypair=" + keypair + ", srp=" + srp + ", validated=" + validated + ", usergroup="
-				+ usergroup + "]";
+				+ email + ", keypair=" + keypair + ", validated=" + validated + "]";
 	}
-
-	
 
 }

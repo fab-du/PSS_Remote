@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,8 +51,8 @@ public class ServiceUser  {
 	 SRP6ServerSession  srpSession;
 
 
-		@Autowired
-		private RepositoryUsers repositoryuser;
+	@Autowired
+	private RepositoryUsers repositoryuser;
 
 
 	@Autowired
@@ -64,12 +65,43 @@ public class ServiceUser  {
 	RepositorySrpCredential repositorysrpcredential;
 
 
-
-
 	@Autowired
 	ServiceGroup servicegroup;
 	
 
+	public ResponseEntity<Iterable<User>> find(){
+		List<User> users = repositoryuser.findAll();
+		
+		if(users != null && users.iterator().hasNext() ) 
+		  return new ResponseEntity<Iterable<User>>(users, HttpStatus.OK);
+		  return new ResponseEntity<Iterable<User>>(HttpStatus.NO_CONTENT);
+	}
+	
+	public ResponseEntity<User> findOne( Long id){
+		User user = repositoryuser.findOne(id);
+		
+		System.out.println( user.toString());
+		
+		if( user != null )
+			return new ResponseEntity<User>( user , HttpStatus.OK);
+			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+	}
+	
+	
+	/*
+	 * Friends related
+	 */
+	public ResponseEntity<Iterable<User>> find_friends( long id){
+		boolean ret = false;
+		
+		User user = repositoryuser.findOne(id); 	
+		
+		if ( user == null )
+			  return new ResponseEntity<Iterable<User>>(HttpStatus.NO_CONTENT);
+	
+		return null;
+	}
+ 	
 	public static PrivateKey priKeyFromString( String prikey ){
 		byte prikeybytes[] = Base64.getDecoder().decode( prikey.getBytes() );
 		KeyFactory keyFactory = null;
@@ -84,6 +116,8 @@ public class ServiceUser  {
 
 		return privatekey;
 	}
+	
+	
 
 	public boolean userExists( Long userId ){
 		return repositoryuser.exists( userId );
