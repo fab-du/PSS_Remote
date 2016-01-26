@@ -11,6 +11,8 @@ import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import de.hsmannheim.cryptolocal.repositories.RepositoryGroup;
@@ -35,38 +37,65 @@ public class ServiceGroup {
 
 	@Autowired
 	private RepositoryUserGroup repositoryusergroup;
+	
+	public ResponseEntity<List<Group>> find(){
+		List<Group> groups = repositorygroup.findAll();
+		
+		if( groups == null )
+			return new ResponseEntity<List<Group>>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<List<Group>>( groups, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Group> findOne( Long groupId ) {
+		Group group = repositorygroup.findOne( groupId );
+		
+		if( group == null )
+			return new ResponseEntity<Group>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Group>( group, HttpStatus.OK);
+	}
 
 
-	public boolean save( Group group, Long userid, boolean isLead , String enc_symkey ){
+	public ResponseEntity<?> create( Group group, boolean isLead ){
 
-		System.out.print(group.getName());
 		Group existingGroup = repositorygroup.findOneByName(group.getName());
 
-		if( existingGroup != null ) return false; else{}
-					
-		if ( !repositoryuser.exists(userid) ) return false; else{}
+		if( existingGroup != null ) 
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 
-		User user = repositoryuser.findOne(userid);
-		KeySym enc_keysym = new KeySym();
-		enc_keysym.setSymkey(enc_symkey);
+		Long gvid = group.getGvid();
+		
+		if ( gvid == null )
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		
+		User user = repositoryuser.findOne(gvid);
+		
+		Group _group = repositorygroup.findOneByName(group.getName());
 
-		repositorykeysym.save(enc_keysym);
-		repositorygroup.save(group);
-
-		group = repositorygroup.findOneByName(group.getName());
-
+		if ( _group != null )
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		
+		group = repositorygroup.save( group );
+		
 		UserGroup usergroup = new UserGroup();
 		usergroup.setUsers(user);
 		usergroup.setGroups(group);
 		usergroup.setUseringroupId(user.getId());
 		usergroup.setGroupId(group.getId());
 		usergroup.setGroupLead(isLead);
-
-		usergroup.setKeysym(enc_keysym);
 		repositoryusergroup.save(usergroup);
-		user.getUsergroup().add(usergroup);
+
+		Set<UserGroup> _users = group.getUsers();
+		_users.add(usergroup);
+		group.setUsers(_users);
+		repositorygroup.save(group); 
+		
+		//repositoryusergroup.save(usergroup);
+		
+		_users = user.getUsergroup();
+		user.setUsergroup(_users);
 		repositoryuser.save(user);
-		return true;
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 
@@ -105,11 +134,14 @@ public class ServiceGroup {
 		return result;
 	}
 
-	public Set<User> findMitglieder( Long groupid ){
+	public ResponseEntity<Set<User>> users( Long groupid ){
 		Group group = repositorygroup.getOne(groupid);
 		String groupname = group.getName();
 		Set<User> mitglieder =  this.findMitglieder(groupname);
-		return mitglieder;
+				
+		if( group == null )
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Set<User>>( mitglieder, HttpStatus.OK);
 	}
 
 	public Set<User> findMitglieder( String groupname ){
@@ -122,11 +154,6 @@ public class ServiceGroup {
 			ret.add( repositoryuser.getOne( obj.getUseringroupId() )); 
 		}
 
-		return ret;
-	}
-
-	public Set<Group> findAll( ){
-		Set<Group> ret = new HashSet<Group>( repositorygroup.findAll() );
 		return ret;
 	}
 
@@ -184,4 +211,7 @@ public class ServiceGroup {
 		
 		return true;
 	}
+
+
+
 }

@@ -23,6 +23,10 @@ public class Group extends AbstEntity{
 	@NotNull
 	@NotEmpty
 	String name;
+	
+	Long gvid;
+
+
 
 
 	/*
@@ -71,6 +75,14 @@ public class Group extends AbstEntity{
 
 	public void setDocuments(Set<Document> documents) {
 		this.documents = documents;
+	}
+	
+	public Long getGvid() {
+		return gvid;
+	}
+
+	public void setGvid(Long gvid) {
+		this.gvid = gvid;
 	}
 
 }

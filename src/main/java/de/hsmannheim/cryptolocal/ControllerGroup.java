@@ -1,5 +1,6 @@
 package de.hsmannheim.cryptolocal;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -32,38 +33,26 @@ public class ControllerGroup {
 
 
 	@RequestMapping( method= RequestMethod.GET )
-	public ResponseEntity<Set<Group>>  getAllGroup( ){
-		Set<Group> ret =  servicegroup.findAll();
-		if(ret == null) return new ResponseEntity<Set<Group>>(HttpStatus.NO_CONTENT); 
-				return new ResponseEntity<Set<Group>>( ret, HttpStatus.OK); 
+	public ResponseEntity<List<Group>>  find( ){
+		return servicegroup.find();
+	}
+	
+	@RequestMapping(value="/{groupId}", method= RequestMethod.GET )
+	public ResponseEntity<Group>  findOne( @PathVariable(value="groupId") Long groupId){
+		return servicegroup.findOne(groupId);
 	}
 
 
 	@RequestMapping( method= RequestMethod.POST )
-	public ResponseEntity<?>  newGroup( @RequestBody Map<String, String> data ){
-		System.out.println( data.values().toString());
-
-		  Group group = new Group();
-		   group.setName(data.get("groupname"));
-		   servicegroup.save( group , new Long(data.get("leaderId")), true, data.get("symkey"));
-
-		return new ResponseEntity<String>(HttpStatus.CREATED);
+	public ResponseEntity<?>  create( @RequestBody Group group){
+		System.out.println( group.toString());
+		return servicegroup.create(group, true);
 	}
 
-	@RequestMapping( value="/{groupId}", method= RequestMethod.GET )
-	public ResponseEntity<?>  groupId( @PathVariable(value="groupId") Long groupId ){
-
-		Map<String, String> ret =  servicegroup.groupId(groupId);
-		if(ret != null && ret.size() > 0 ) 
-			return new ResponseEntity<Map<String, String>>( ret, HttpStatus.OK); 
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT); 
-	}
 
 	@RequestMapping(value="/{groupId}/users", method= RequestMethod.GET )
-	public ResponseEntity<Set<User>>  getUserOfGroupFromId( @PathVariable(value="groupId") Long groupid ){
-		Set<User> ret =  servicegroup.findMitglieder(groupid);
-		if(ret == null) return new ResponseEntity<Set<User>>(HttpStatus.NO_CONTENT); 
-				return new ResponseEntity<Set<User>>( ret, HttpStatus.OK); 
+	public ResponseEntity<Set<User>>  users( @PathVariable(value="groupId") Long groupid ){
+		return servicegroup.users(groupid);
 	}
 
 //	@RequestMapping(value="/{gv}",  method= RequestMethod.POST, consumes= MediaType.APPLICATION_JSON_VALUE )
