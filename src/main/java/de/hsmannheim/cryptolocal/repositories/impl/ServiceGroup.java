@@ -82,32 +82,18 @@ public class ServiceGroup {
 		usergroup.setUseringroupId(user.getId());
 		usergroup.setGroupId(group.getId());
 		usergroup.setGroupLead(isLead);
-		repositoryusergroup.save(usergroup);
+		usergroup =repositoryusergroup.save(usergroup);
 
 		Set<UserGroup> _users = group.getUsers();
 		_users.add(usergroup);
 		group.setUsers(_users);
 		repositorygroup.save(group); 
 		
-		//repositoryusergroup.save(usergroup);
-		
 		_users = user.getUsergroup();
 		user.setUsergroup(_users);
 		repositoryuser.save(user);
 		
 		return new ResponseEntity<>(HttpStatus.CREATED);
-	}
-
-
-	public Map<String, String> groupId( Long groupId ){
-		Group group = repositorygroup.getOne(groupId);
-
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("groupname", group.getName() );
-		result.put("id", String.valueOf(group.getId()) );
-		result.put("documents", String.valueOf(group.getDocuments().size()) );
-		result.put("users",   String.valueOf(group.getUsers().size()) );
-		return result;
 	}
 
 	public List<Group> findWhereUserIsGV( Long gvid ){
@@ -143,6 +129,19 @@ public class ServiceGroup {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			return new ResponseEntity<Set<User>>( mitglieder, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<Set<Document>> documents( Long groupid ){
+		Group group = repositorygroup.getOne(groupid);
+
+		if( group == null )
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+		Set<Document> documents = group.getDocuments();
+		
+		if( documents == null )
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Set<Document>>( documents, HttpStatus.OK);
+	}
 
 	public Set<User> findMitglieder( String groupname ){
 		Group group = repositorygroup.findOneByName(groupname);
@@ -157,61 +156,42 @@ public class ServiceGroup {
 		return ret;
 	}
 
-	public boolean addUserToGroup( Long gvid , Long groupid, String newuseremail, String passphrase  ){
-		boolean ret = false;
-
-//		User user = repositoryuser.getOne(gvid);
-//		User newuser = repositoryuser.findOneByEmail(newuseremail);
-//
-//		if(  user != null && newuser != null && (repositorygroup.exists(groupid) == true) ){
-//			Group group = repositorygroup.findOne(groupid);
-//
-//			AESCrypto aes = (AESCrypto) CryptFactor.getInstance( CryptFactor.CRYPT_SYM_AES );
-//			RSAPBECrypto rsa = (RSAPBECrypto) CryptFactor.getInstance(CryptFactor.CRYPT_ASYM_RSA_PBE);
-//			String newuser_pubkey = newuser.getKeypair().getPubkey();
-//			String gv_prikey = user.getKeypair().getPrikey();
-//
-//			Set<UserGroup> usergroup = user.getUsergroup();
-//
-//			KeySym enc_keysym =  new KeySym();
-//
-//			for( Iterator<UserGroup> it = usergroup.iterator(); it.hasNext(); ){
-//				UserGroup obj = it.next();
-//				if( (obj.getGroupId() == groupid) && (obj.isGroupLead() == true ) ){
-//					enc_keysym = obj.getKeysym();
-//					ret  = true;
-//					break;
-//				}
-//			}
-//
-//			if( ret == false ) return ret; else{}
-//
-//			String dec_keysym = rsa.decrypt(gv_prikey, passphrase, user.getKeypair().getSalt(), enc_keysym.getSymkey());
-//
-//			KeySym newuser_symkey = new KeySym();
-//			newuser_symkey.setSymkey( rsa.encrypt(newuser_pubkey, dec_keysym) );
-//			repositorykeysym.save(newuser_symkey);
-//
-//
-//			UserGroup usergp = new UserGroup();
-//			usergp.setUsers(newuser);
-//			usergp.setGroups(group);
-//			usergp.setUseringroupId(newuser.getId());
-//			usergp.setGroupId(group.getId());
-//			usergp.setGroupLead(false);
-//
-//			usergp.setKeysym(newuser_symkey);
-//			repositoryusergroup.save(usergp);
-//			newuser.getUsergroup().add(usergp);
-//			repositoryuser.save(newuser);
-			
-		//	ret = true;
-
-//		}
+	
+	public ResponseEntity<?> addUser( User user, Long groupId ){
+		Group group = repositorygroup.findOne( groupId ); 
 		
-		return true;
+		if( group == null || user == null)
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+		System.out.println( user.getId());
+		User _user = repositoryuser.findOne( user.getId() );
+		
+		if ( _user == null )
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		
+		UserGroup usergroup = new UserGroup();
+		usergroup.setUsers(_user);
+		usergroup.setGroups(group);
+		usergroup.setUseringroupId(_user.getId());
+		usergroup.setGroupId(group.getId());
+		usergroup.setGroupLead(false);
+		usergroup=repositoryusergroup.save(usergroup);
+		
+		Set<UserGroup> _users = group.getUsers();
+		_users.add(usergroup);
+		group.setUsers(_users);
+		repositorygroup.save(group); 
+		
+		_users = _user.getUsergroup();
+		_users.add(usergroup);
+		_user.setUsergroup(_users);
+		repositoryuser.save(_user);
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-
+	public ResponseEntity<Set<Document>> addDocument(Long groupId, Document document) {
+		return null;
+	}
 
 }
