@@ -40,73 +40,31 @@ public class ControllerDocument {
 	@Autowired
 	ServiceDocument servicedoc;
 
-	/*
-	 * Gibt Dokumenteliste von benutzergroup 
-	 */
-
-	@RequestMapping( method= RequestMethod.GET  )
-	public Set<Document> getAllDocuments( @PathVariable(value="groupId") Long groupid ){
-		return servicedoc.listAlldocumentFromGroup(groupid);
+	
+	@RequestMapping( method=RequestMethod.GET  )
+	public ResponseEntity<Document[]> find(){
+		return null;
+	}
+	
+	@RequestMapping(value="/{documentId}", method=RequestMethod.GET  )
+	public ResponseEntity<Document> findOne( @PathVariable(value="documentId") Long documentId ){
+		return null;
+	}
+	
+	@RequestMapping( method=RequestMethod.POST )
+	public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) throws IOException{
+		System.out.println( file.getOriginalFilename());
+		return servicedoc.create(file);
 	}
 
-
-	@RequestMapping( value="/addDocument", method= RequestMethod.POST )
-	public @ResponseBody
-	void uploadDocumentToGroup( HttpServletRequest request, HttpServletResponse response ) throws IOException, ServletException
-	{
-		System.out.println("commm here");
-		 final String path = request.getParameter("destination");
-		  final  javax.servlet.http.Part filePart = request.getPart("file");
-		  final String fileName = request.getParameter("filename");
-		System.out.println(fileName);
-
-		  OutputStream out = null;
-		  InputStream fileContent = null;
-		  final PrintWriter writer = response.getWriter();
-
-		  try {
-//		    out = new FileOutputStream(new File(path + File.separator
-//		            + fileName));
-
-		    out = new FileOutputStream(new File(fileName));
-		    fileContent = filePart.getInputStream();
-
-		    int read = 0;
-		    final byte[] bytes = new byte[1024];
-
-		    while ((read = fileContent.read(bytes)) != -1) {
-		      out.write(bytes, 0, read);
-		    }
-
-		    writer.println("New file " + fileName + " created at " + path);
-
-		  } catch (FileNotFoundException fne) {
-		    writer.println("You either did not specify a file to upload or are "
-		            + "trying to upload a file to a protected or nonexistent "
-		            + "location.");
-		    writer.println("<br/> ERROR: " + fne.getMessage());
-
-		  } finally {
-		    if (out != null) {
-		      out.close();
-		    }
-		    if (fileContent != null) {
-		      fileContent.close();
-		    }
-		    if (writer != null) {
-		      writer.close();
-		    }
-		  }
-
+	@RequestMapping(value="/{documentId}/changeOwner", method=RequestMethod.POST  )
+	public ResponseEntity<?> documentId_changeOwner( @PathVariable(value="documentId") Long documentId ){
+		return null;
 	}
 
-
-	/*
-	 * Schiebe Datei von GruppeA -> GruppeB
-	 */
-	public void changeFileOwner(){
-		
+	@RequestMapping(value="/{documentId}/shareDocument", method=RequestMethod.POST  )
+	public ResponseEntity<?> documentId_shareDocument( @PathVariable(value="documentId") Long documentId ){
+		return null;
 	}
-
 
 }

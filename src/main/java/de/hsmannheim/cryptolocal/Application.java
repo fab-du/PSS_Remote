@@ -1,4 +1,7 @@
 package de.hsmannheim.cryptolocal;
+import java.io.File;
+
+import org.aspectj.weaver.patterns.ThisOrTargetAnnotationPointcut;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,5 +19,19 @@ public class Application extends SpringBootServletInitializer{
 	}	
 	public static void main( String[] args ) throws Exception{
 		SpringApplication.run(Application.class, args);	
+		Application.makeUploadDir();
+	}
+	
+	public static void makeUploadDir(){
+		File file = new File("uploads");
+		
+		if( !file.exists()){
+			if( file.mkdir()){
+				System.out.println("Make upload dir");
+			}
+			else{
+				System.out.println("Upload dir already exists");
+			}
+		}
 	}
 }

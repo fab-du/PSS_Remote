@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import de.hsmannheim.cryptolocal.models.Document;
 import de.hsmannheim.cryptolocal.models.Group;
@@ -57,8 +59,10 @@ public class ControllerGroup {
 	}
 	
 	@RequestMapping( value="/{groupId}/documents", method = RequestMethod.POST)
-	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId, @RequestBody Document document){
-		return servicegroup.addDocument(groupId, document);
+	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId,@RequestParam("file") MultipartFile file ){
+		System.out.println("comme here");
+		//return servicegroup.addDocument(groupId, document);
+		return null;
 	}
 
 //	@RequestMapping(value="/{gv}",  method= RequestMethod.POST, consumes= MediaType.APPLICATION_JSON_VALUE )
