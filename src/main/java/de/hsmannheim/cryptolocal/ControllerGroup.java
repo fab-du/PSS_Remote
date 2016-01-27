@@ -1,5 +1,6 @@
 package de.hsmannheim.cryptolocal;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,11 @@ public class ControllerGroup {
 		return servicegroup.findOne(groupId);
 	}
 
-
 	@RequestMapping( method= RequestMethod.POST )
 	public ResponseEntity<?>  create( @RequestBody Group group){
 		System.out.println( group.toString());
 		return servicegroup.create(group, true);
 	}
-
 
 	@RequestMapping(value="/{groupId}/users", method= RequestMethod.GET )
 	public ResponseEntity<Set<User>>  users( @PathVariable(value="groupId") Long groupid ){
@@ -59,26 +58,22 @@ public class ControllerGroup {
 	}
 	
 	@RequestMapping( value="/{groupId}/documents", method = RequestMethod.POST)
-	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId,@RequestParam("file") MultipartFile file ){
-		System.out.println("comme here");
-		//return servicegroup.addDocument(groupId, document);
-		return null;
+	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId,@RequestParam("file") MultipartFile file ) throws IOException{
+		return servicegroup.addDocument(groupId, file);
 	}
-
-//	@RequestMapping(value="/{gv}",  method= RequestMethod.POST, consumes= MediaType.APPLICATION_JSON_VALUE )
-//	public ResponseEntity<Iterable<Group>>  createGroup( @RequestBody @Valid Group newgroup,
-//		@PathVariable( value="gv") Long gv){
-//
-//
-//		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-//		Set<ConstraintViolation<Group>> constraintViolations = validator.validate( newgroup);
-//
-//		if( constraintViolations.size() > 0 ) return
-//				new ResponseEntity<Iterable<Group>>(HttpStatus.EXPECTATION_FAILED); 
-//
-//		boolean ret = servicegroup.save(newgroup, gv , true);
-//		if(ret) return new ResponseEntity<Iterable<Group>>(HttpStatus.CREATED); 
-//				return new ResponseEntity<Iterable<Group>>(HttpStatus.CONFLICT); 
-//	}
-
+	
+	@RequestMapping( value="/{groupId}/documents/{documentId}", method = RequestMethod.GET )
+	public ResponseEntity<Document> groupId_documents_documentId( @PathVariable(value="groupId") Long groupId,
+			@PathVariable(value="documentId") Long documentId){
+		System.out.println("comme hr");
+		return servicegroup.groupId_documents_documentId(groupId, documentId);
+	}
+	
+	//TODO
+	@RequestMapping( value="/{groupId}/documents/{documentId}/shareDocument", method = RequestMethod.POST )
+	public ResponseEntity<?> groupId_documents_documentId_shareDocument( @PathVariable(value="groupId") Long groupId,
+			@PathVariable(value="documentId") Long documentId){
+		return null;
+	}	
+	
 }

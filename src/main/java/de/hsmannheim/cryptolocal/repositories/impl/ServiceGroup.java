@@ -1,26 +1,27 @@
 package de.hsmannheim.cryptolocal.repositories.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import de.hsmannheim.cryptolocal.repositories.RepositoryDocuments;
 import de.hsmannheim.cryptolocal.repositories.RepositoryGroup;
-import de.hsmannheim.cryptolocal.repositories.RepositoryKeysym;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUserGroup;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
 import de.hsmannheim.cryptolocal.models.*;
-//import de.cryptone.crypto.*;
 
 @Service
 @Transactional
@@ -28,13 +29,13 @@ public class ServiceGroup {
 
 	@Autowired
 	private RepositoryGroup repositorygroup;
+	
+	@Autowired
+	private RepositoryDocuments repositorydocument;
 
 	@Autowired
 	private RepositoryUsers repositoryuser;
 	
-	@Autowired
-	private RepositoryKeysym repositorykeysym;
-
 	@Autowired
 	private RepositoryUserGroup repositoryusergroup;
 	
@@ -137,6 +138,7 @@ public class ServiceGroup {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
 		Set<Document> documents = group.getDocuments();
+		documents.forEach((Document doc)-> System.out.println(doc.toString()));
 		
 		if( documents == null )
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -190,8 +192,86 @@ public class ServiceGroup {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	public ResponseEntity<Set<Document>> addDocument(Long groupId, Document document) {
-		return null;
+	public ResponseEntity<Set<Document>> addDocument(Long groupId, MultipartFile file) throws IOException {
+		Group group = repositorygroup.findOne( groupId );
+		
+		if( group == null || file.isEmpty() )
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+		String groupname = group.getName(); 
+		this.makeUploadGroupDir(groupname);
+		
+		InputStream is = file.getInputStream();
+
+		File _file = new File( "uploads/" + groupname + "/" + file.getOriginalFilename() );
+		FileOutputStream fos = new FileOutputStream( _file );
+		int read = 0;
+		final byte[] bytes = new byte[1024];
+	
+		while((read=is.read(bytes)) != -1){
+			fos.write(bytes, 0, read);
+		}
+		
+		this.saveDocument(group, file.getOriginalFilename());
+		
+		is.close();
+		fos.close();
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	private void saveDocument( Group group, String filename ){
+		Document document = new Document();
+		document.setGroups(group);
+		document.setName(filename);
+		document.setPath(group.getName());
+		document = repositorydocument.save(document);
+		
+		Set<Document> documents = group.getDocuments();
+		documents.add( document );
+		group.setDocuments(documents);
+		repositorygroup.save(group);
+	}
+	
+	public  ResponseEntity<Document> groupId_documents_documentId( Long groupId, Long documentId ){
+		Group group;
+		
+		if( groupId == null || 
+				documentId == null || 
+				( group= repositorygroup.findOne(groupId)) == null)
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+		Set<Document> documents = group.getDocuments();
+		
+		Iterator<Document> it = documents.iterator();
+		
+		Document document = null;
+		boolean ret = false;
+		while( it.hasNext() ){
+			document = it.next();
+			
+			if ( document.getId().equals(documentId)){
+				ret = true;
+				break;
+			}
+		}
+			
+		if ( ret && document != null )
+			return new ResponseEntity<Document>(document, HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	private void makeUploadGroupDir( String groupname ){
+		File file = new File("uploads/" + groupname);
+		
+		if( !file.exists()){
+			if( file.mkdir()){
+				System.out.println("Make upload Group dir");
+			}
+			else{
+				System.out.println("Upload group dir already exists");
+			}
+		}
+		
 	}
 
 }
