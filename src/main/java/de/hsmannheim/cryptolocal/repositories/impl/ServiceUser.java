@@ -27,6 +27,7 @@ import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
 //import de.cryptone.crypto.CryptFactor;
 
+import com.google.common.net.MediaType;
 import com.nimbusds.srp6.SRP6CryptoParams;
 import com.nimbusds.srp6.SRP6ServerSession;
 import com.nimbusds.srp6.SRP6VerifierGenerator;
@@ -48,18 +49,10 @@ import java.security.spec.PKCS8EncodedKeySpec;
 @Transactional
 public class ServiceUser  {
 
-	 SRP6ServerSession  srpSession;
-
-
+	SRP6ServerSession  srpSession;
+	
 	@Autowired
 	private RepositoryUsers repositoryuser;
-
-
-	@Autowired
-	private RepositoryCredential repositorycredential;
-
-	@Autowired
-	private RepositorySession repositorysession;
 	
 	@Autowired
 	RepositorySrpCredential repositorysrpcredential;
@@ -69,6 +62,10 @@ public class ServiceUser  {
 	ServiceGroup servicegroup;
 	
 
+	public User findByEmail( String email ){
+		return repositoryuser.findOneByEmail(email);
+	}
+	
 	public ResponseEntity<Iterable<User>> find(){
 		List<User> users = repositoryuser.findAll();
 		
@@ -158,7 +155,7 @@ public class ServiceUser  {
 	}
 
 	public ResponseEntity<Map<String, String>> 
-		step2(Map<String, String> authdata, HttpServletResponse response) throws Exception {
+		step2(Map<String, String> authdata ) throws Exception {
 	
 		  BigInteger evidence = null;
 		  Map<String, String > result = 
@@ -167,29 +164,16 @@ public class ServiceUser  {
           String A = authdata.get("A");
           String M1 =  authdata.get("M1");
           
-          System.out.println(A);
-          System.out.println(M1);
           try {
 				  evidence = srpSession.step2( new BigInteger(A) , new BigInteger(M1) );
 				  result.put("evidence",  evidence.toString());
+				  User user = this.findByEmail( authdata.get("email"));
+				  result.put("currentUserId", user.getId().toString());
+				  result.put("email", user.getEmail());
+				  System.out.println( user.getId().toString());
 				  HttpHeaders responseHeaders = new HttpHeaders();
-
-//				  Collection<String> headers = response.getHeaderNames();
-//				  
-//				  Iterator<String> it = headers.iterator();
-//				  
-//				  while( it.hasNext() ){
-//					  String headername = it.next();
-//					  System.out.println( headername);
-//					  responseHeaders.set(headername, response.getHeader(headername));
-//				  }
-			
-				 String key = response.getHeader("SERVER_PRIVATE_KEY");
-				 PrivateKey _key = ServiceUser.priKeyFromString( key );
-				 String token =  "Bearer " + this.jwt(evidence.toString(), _key);
-				 System.out.println(token);
-				 responseHeaders.set("Authorization", token);
-				
+				  responseHeaders.set( "jss", "toto" );
+				 responseHeaders.set("Authorization", "Authorization");
 				 return new ResponseEntity<Map<String,String>>(result, responseHeaders, HttpStatus.OK);
 				  
           	  } catch (Exception e) {

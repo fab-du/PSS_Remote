@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
+import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceUser;
 
@@ -61,10 +62,9 @@ public class ControllerSession {
 		Map<String, String > result = null;
 
 		try {
-			ResponseEntity<Map<String, String>> ret =  serviceuser.step2( authdata, response );
+			ResponseEntity<Map<String, String>> ret =  serviceuser.step2( authdata);
 			return ret;
 		} catch (Exception e) {
-			System.out.println("Ehe hier");
 			Map<String, String> errorMessage = new HashMap<String, String>();
 			errorMessage.put("AUTH_ERROR", "Authentication failure");
 			return new ResponseEntity<Map<String,String>>( errorMessage, HttpStatus.FORBIDDEN );

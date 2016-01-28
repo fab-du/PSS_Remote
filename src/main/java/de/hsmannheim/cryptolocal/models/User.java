@@ -24,7 +24,11 @@ public class User extends AbstEntity{
 	 * 		 - company
 	 */
 	@NotBlank
-	String firstname, secondname,  company; 
+	String firstname;
+	
+	@NotBlank	
+	String secondname;
+	String company; 
 
 	@NotBlank
 	@Email
