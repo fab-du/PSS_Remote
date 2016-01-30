@@ -109,7 +109,7 @@ public class ServiceGroup {
 		return  result; 
 	}
 
-	public Set<Group> findUserGroup( long userid ){
+	public ResponseEntity<Set<Group>> findUserGroup( long userid ){
 		List<UserGroup> usergroups = repositoryusergroup.findByUseringroupId(userid);
 		Set<Group> result = new HashSet<Group>();
 
@@ -117,8 +117,10 @@ public class ServiceGroup {
 			UserGroup obj = it.next();
 			result.add( repositorygroup.getOne( obj.getGroupId()));
 		}
-
-		return result;
+		
+		if( result != null && !result.isEmpty())
+			return new ResponseEntity<Set<Group>>(result, HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	public ResponseEntity<Set<User>> users( Long groupid ){

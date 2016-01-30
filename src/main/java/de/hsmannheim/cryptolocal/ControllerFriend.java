@@ -39,8 +39,6 @@ public class ControllerFriend {
 	
 	@RequestMapping( value="/{friendId}/revoke", method=RequestMethod.DELETE )
 	public ResponseEntity<?> revoke(@PathVariable(value="userId") Long userId, @PathVariable(value="friendId") Long friendId){
-		System.out.println( userId );
-		System.out.println( friendId );
 		return serviceFriend.revoke(userId, friendId);
 	}
 	

@@ -31,6 +31,7 @@ public class ControllerGroup {
 		return servicegroup.find();
 	}
 	
+	
 	@RequestMapping(value="/{groupId}", method= RequestMethod.GET )
 	public ResponseEntity<Group>  findOne( @PathVariable(value="groupId") Long groupId){
 		return servicegroup.findOne(groupId);
@@ -38,7 +39,6 @@ public class ControllerGroup {
 
 	@RequestMapping( method= RequestMethod.POST )
 	public ResponseEntity<?>  create( @RequestBody Group group){
-		System.out.println( group.toString());
 		return servicegroup.create(group, true);
 	}
 
@@ -50,6 +50,12 @@ public class ControllerGroup {
 	@RequestMapping( value="/{groupId}/users", method = RequestMethod.POST )
 	public ResponseEntity<?> addUser( @PathVariable(value="groupId") Long groupId,@RequestBody User user ){
 		return servicegroup.addUser(user, groupId);
+	}
+	
+	@RequestMapping( value="/users/{userId}", method= RequestMethod.GET )
+	public ResponseEntity<Set<Group>>  find_where_user_group(@PathVariable(value="userId") Long userId ){
+		System.out.println("comme hreer");
+		return servicegroup.findUserGroup(userId);
 	}
 	
 	@RequestMapping( value="/{groupId}/documents", method = RequestMethod.GET)
