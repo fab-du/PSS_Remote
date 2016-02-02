@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import de.hsmannheim.cryptolocal.models.Friendship;
+import de.hsmannheim.cryptolocal.models.Group;
 import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.repositories.RepositoryFriend;
+import de.hsmannheim.cryptolocal.repositories.RepositoryGroup;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
 
 @Service
@@ -24,7 +26,13 @@ public class ServiceFriend {
 	RepositoryFriend repositoryFriend;
 	
 	@Autowired
+	RepositoryGroup repositoryGroup;
+	
+	@Autowired
 	RepositoryUsers repositoryUser;
+	
+	@Autowired
+	ServiceGroup serviceGroup;
 	
 	public
 	ResponseEntity<Iterable<User>> 
@@ -134,4 +142,16 @@ public class ServiceFriend {
 	}
 	
 	
+	public ResponseEntity<?> addFriendToGroup( Long friendId, Long gvId, Long groupId ){
+		boolean gvExist = repositoryUser.exists(gvId);
+		Group group = repositoryGroup.findOne(groupId);
+		
+		boolean isGv  = group.getGvid().equals(gvId);
+		
+		if( !gvExist || !isGv ) 
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+		
+		User friend = repositoryUser.findOne( friendId );
+		return serviceGroup.addUser( friend, groupId);
+	}
 }

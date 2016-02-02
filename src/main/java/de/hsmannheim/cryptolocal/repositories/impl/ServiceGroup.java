@@ -194,7 +194,7 @@ public class ServiceGroup {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	public ResponseEntity<Set<Document>> addDocument(Long groupId, MultipartFile file) throws IOException {
+	public ResponseEntity<Document> addDocument(Long groupId, MultipartFile file) throws IOException {
 		Group group = repositorygroup.findOne( groupId );
 		
 		if( group == null || file.isEmpty() )
@@ -214,14 +214,17 @@ public class ServiceGroup {
 			fos.write(bytes, 0, read);
 		}
 		
-		this.saveDocument(group, file.getOriginalFilename());
+		Document document = this.saveDocument(group, file.getOriginalFilename());
 		
 		is.close();
 		fos.close();
-		return new ResponseEntity<>(HttpStatus.OK);
+		
+		if( document != null )
+			return new ResponseEntity<Document>(document, HttpStatus.CREATED);
+				return new ResponseEntity<Document>(HttpStatus.OK);
 	}
 	
-	private void saveDocument( Group group, String filename ){
+	private Document saveDocument( Group group, String filename ){
 		Document document = new Document();
 		document.setGroups(group);
 		document.setName(filename);
@@ -232,6 +235,7 @@ public class ServiceGroup {
 		documents.add( document );
 		group.setDocuments(documents);
 		repositorygroup.save(group);
+		return document;
 	}
 	
 	public  ResponseEntity<Document> groupId_documents_documentId( Long groupId, Long documentId ){

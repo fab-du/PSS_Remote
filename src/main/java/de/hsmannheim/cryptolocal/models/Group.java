@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 @Entity
 @Table(name="groups")
 public class Group extends AbstEntity{
@@ -25,7 +26,6 @@ public class Group extends AbstEntity{
 	String name;
 	
 	Long gvid;
-
 
 
 

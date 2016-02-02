@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.persistence.OneToOne;
 import java.util.Set;
@@ -36,15 +37,21 @@ public class User extends AbstEntity{
 
 
 	public User(){}
-	public User(String firstname, String secondname, String email, String company, boolean validated) {
+
+
+	public User(String firstname, String secondname, String company, String email, KeyPair keypair, SrpCredential srp,
+			boolean validated, Set<UserGroup> usergroup, Set<Friendship> friends) {
 		super();
 		this.firstname = firstname;
 		this.secondname = secondname;
-		this.email = email;
 		this.company = company;
+		this.email = email;
+		this.keypair = keypair;
+		this.srp = srp;
 		this.validated = validated;
+		this.usergroup = usergroup;
+		this.friends = friends;
 	}
-
 
 	/*
 	 * user pairkeys
@@ -55,13 +62,14 @@ public class User extends AbstEntity{
 
 	@OneToOne(cascade=CascadeType.ALL)
 	@JsonIgnore
-	 SrpCredential srp;
+	SrpCredential srp;
 
 	/*
 	 * user status
 	 */
 	boolean validated=false;
 
+	
 	@OneToMany(mappedBy="users", cascade = CascadeType.ALL)
 	@JsonIgnore
 	Set<UserGroup> usergroup = new HashSet<UserGroup>();
@@ -102,7 +110,6 @@ public class User extends AbstEntity{
 	public void setCompany(String company) {
 		this.company = company;
 	}
-
 
 	public KeyPair getKeypair() {
 		return keypair;
