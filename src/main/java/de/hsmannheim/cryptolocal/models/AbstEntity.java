@@ -14,7 +14,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 @MappedSuperclass
-public class AbstEntity {
+public class AbstEntity extends  AbstSecureModel{
 
 	@Id 
 	@GeneratedValue

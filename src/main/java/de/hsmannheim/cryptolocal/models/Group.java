@@ -18,16 +18,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="groups")
 public class Group extends AbstEntity{
 
-	/*
-	 * Group name
-	 */
 	@NotNull
 	@NotEmpty
 	String name;
 	
 	Long gvid;
-
-
 
 	/*
 	 * MitgliedSchaft
