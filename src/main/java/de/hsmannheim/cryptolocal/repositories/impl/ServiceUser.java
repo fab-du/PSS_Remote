@@ -1,16 +1,10 @@
 package de.hsmannheim.cryptolocal.repositories.impl;
 import java.math.BigInteger;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-
-//import de.cryptone.crypto.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,21 +15,15 @@ import org.springframework.stereotype.Service;
 
 import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.models.SrpCredential;
-import de.hsmannheim.cryptolocal.repositories.RepositoryCredential;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
-import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
 //import de.cryptone.crypto.CryptFactor;
 
-import com.google.common.net.MediaType;
 import com.nimbusds.srp6.SRP6CryptoParams;
 import com.nimbusds.srp6.SRP6ServerSession;
-import com.nimbusds.srp6.SRP6VerifierGenerator;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.RsaSigner;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.KeySpec;
@@ -76,9 +64,6 @@ public class ServiceUser  {
 	
 	public ResponseEntity<User> findOne( Long id){
 		User user = repositoryuser.findOne(id);
-		
-		System.out.println( user.toString());
-		
 		if( user != null )
 			return new ResponseEntity<User>( user , HttpStatus.OK);
 			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
@@ -89,14 +74,10 @@ public class ServiceUser  {
 	 * Friends related
 	 */
 	public ResponseEntity<Iterable<User>> find_friends( long id){
-		boolean ret = false;
-		
 		User user = repositoryuser.findOne(id); 	
-		
 		if ( user == null )
 			  return new ResponseEntity<Iterable<User>>(HttpStatus.NO_CONTENT);
-	
-		return null;
+				return null;
 	}
  	
 	public static PrivateKey priKeyFromString( String prikey ){
@@ -121,7 +102,9 @@ public class ServiceUser  {
 	}
 
 	public boolean usereExists( String email ){
-
+		
+		if( email == null ) return false;
+		
 		if (email.trim().equals( repositoryuser.findOneByEmail(email.trim()).getEmail()) ){
 			return true;
 		}
@@ -135,6 +118,9 @@ public class ServiceUser  {
 	}
 
 	public Map<String, String> step1(String email) throws Exception {
+		
+		if( !this.usereExists(email)) return null; 
+		
 		SRP6CryptoParams config = SRP6CryptoParams.getInstance();
 
 		SrpCredential srp = repositorysrpcredential.findOneByEmail(email);
