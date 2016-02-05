@@ -91,9 +91,7 @@ public class ServiceFriend {
 	
 	public
 	ResponseEntity<User> 
-	create( Long id, User user){
-		Friendship friendship = new Friendship();
-		friendship.setFriendId( user.getId() );
+	create( Long id, Friendship friendship){
 		User _user = repositoryUser.findOne(id);
 		friendship.setUsers(  _user );
 		repositoryFriend.save(friendship); 

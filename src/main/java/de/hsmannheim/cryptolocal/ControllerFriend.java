@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.hsmannheim.cryptolocal.models.Friendship;
 import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceFriend;
 
@@ -27,18 +28,12 @@ public class ControllerFriend {
 	
 	@RequestMapping( value="/{friendId}", method=RequestMethod.GET )
 	public ResponseEntity<?> findOne(  @PathVariable(value="userId") Long userId, @PathVariable(value="friendId") Long friendId){
-		System.out.println( userId );
-		System.out.println( friendId );
-
 		return serviceFriend.findOne(userId, friendId);
 	}
 	
 	@RequestMapping( method=RequestMethod.POST )
-	public ResponseEntity<?> create( @PathVariable(value="userId") Long userId, @RequestBody User user ){
-		System.out.println("comme here");
-		System.out.println("comme here");
-
-		return serviceFriend.create( userId ,user );
+	public ResponseEntity<?> create( @PathVariable(value="userId") Long userId, @RequestBody Friendship friendship ){
+		return serviceFriend.create( userId , friendship );
 	}
 	
 	@RequestMapping( value="/{friendId}/revoke", method=RequestMethod.DELETE )
