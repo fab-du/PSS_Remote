@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -34,6 +35,10 @@ public class Group extends AbstEntity{
 	@OneToMany(mappedBy="groups" ,cascade=CascadeType.ALL)
 	@JsonIgnore
 	Set<Document> documents = new HashSet<Document>();
+	
+	@OneToOne( cascade=CascadeType.ALL )
+	KeySym groupkey;
+	
 
 	public void addUserToGroup( User user, KeySym keysym, boolean groupLead ){
 		UserGroup usergroup = new UserGroup();
@@ -80,4 +85,12 @@ public class Group extends AbstEntity{
 		this.gvid = gvid;
 	}
 
+	public KeySym getGroupkey() {
+		return groupkey;
+	}
+
+	public void setGroupkey(KeySym groupkey) {
+		this.groupkey = groupkey;
+	}
+	
 }
