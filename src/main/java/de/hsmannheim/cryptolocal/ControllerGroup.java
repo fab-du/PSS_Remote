@@ -1,9 +1,14 @@
 package de.hsmannheim.cryptolocal;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +78,26 @@ public class ControllerGroup {
 			@PathVariable(value="documentId") Long documentId){
 		System.out.println("comme hr");
 		return servicegroup.groupId_documents_documentId(groupId, documentId);
+	}
+	
+	@RequestMapping( value="/{groupId}/documents/{documentId}/download", method = RequestMethod.GET )
+	public ResponseEntity<InputStreamResource> groupId_documents_documentId_download( @PathVariable(value="groupId") Long groupId,
+			@PathVariable(value="documentId") Long documentId ) throws IOException{
+		File file = new File("deployment.jpg");
+		
+		String mime = URLConnection.guessContentTypeFromName(file.getName());
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		headers.add("Pragma", "no-cache");
+		headers.add("Expires", "0");
+		headers.setContentType( MediaType.parseMediaType(mime));
+		headers.setContentDispositionFormData("attachment", file.getName());
+		InputStreamResource	isr = new InputStreamResource(new FileInputStream(file));
+		return ResponseEntity
+				.ok()
+				.headers(headers)
+				.contentLength(file.length())
+				.body( isr);
 	}
 	
 	//TODO
