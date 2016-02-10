@@ -105,7 +105,7 @@ public class ServiceSession {
 		return ( expireIn <= currentTimeMilli );
 	}
 	
-	public void deletEpiredSession(){
+	public void deleteEpiredSession(){
 		Iterable<Session> activeSessions = repositorysession.findAll();
 
 		for (Session session : activeSessions) {
@@ -120,7 +120,7 @@ public class ServiceSession {
 	@Scheduled(fixedRate= SCHEDULE_TIME)
 	public void removeExpiredSession(){
 		log.info("remove expired token from database");
-		this.deletEpiredSession();
+		this.deleteEpiredSession();
 	}
 	
 	public boolean isAuthenticate( String token ){

@@ -1,0 +1,37 @@
+spring:
+    application:
+        name: Crypto-RemoteSever
+    http: 
+        encoding:
+            enabled: true # enable http encoding support
+            charset: UTF-8 # the encoding of HTTP requests/responses
+            force: true # force the configured encoding
+    datasource:
+        url: jdbc:postgresql://localhost:5432/crypto
+        username: postgres
+        password: postgres
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+        hibernate.ddl-auto: update
+    mail:
+        host: 
+        username:
+        password:
+        default-encoding: UTF-8
+server: 
+    port: 8080
+
+multipart:
+    enabled: true
+    location: uploads
+    max-file-size: 10Mb
+    max-request-size: 100Mb
+
+security:
+    sessions: stateless 
+    ignored: /
+
+
+
