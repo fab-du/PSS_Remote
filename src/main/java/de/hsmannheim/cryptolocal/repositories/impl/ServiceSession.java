@@ -63,7 +63,6 @@ public class ServiceSession {
 
 		repositoryuser.save(newuser);
 
-
 		KeyPair keytosave = new KeyPair();
 		keytosave.setPrikey(user.get("prikey"));
 		keytosave.setPubkey(user.get("pubkey"));
