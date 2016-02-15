@@ -1,18 +1,23 @@
 package de.hsmannheim.security;
 
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import javax.servlet.http.HttpServletResponse;
@@ -20,12 +25,16 @@ import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 @Configuration
-@Order(1)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Autowired
 	AuthenticationManager authManager;
+	
+	@Autowired
+	ApplicationContext applicationContext;
+	
+	
 	
 	public SecurityConfig() {
 		super(true);
@@ -33,38 +42,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Override 
 	protected void configure(HttpSecurity http) throws Exception {
-	    http
-           .csrf()
-           .disable();
 
-        http
-            .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint());
-
-
-        http
-            .sessionManagement().disable();
-
-	    http.anonymous();
-
-        http
-            .requestCache().disable();
+		http.httpBasic().disable();
+		http.rememberMe().disable();
+		
+		http.csrf().disable();
+		
+		http.x509().disable();
+		
+		http.formLogin().disable();
+		
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	    
-	    http
-	        .authorizeRequests()
-	            .antMatchers("/session/login/challenge").permitAll()
-	            .antMatchers("/session/login/authenticate").permitAll()
-	            .antMatchers("/session/register").permitAll()
-	            .antMatchers("/session/logout").permitAll()
-	            .anyRequest().authenticated();
+		http.exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint());
 
-        http.addFilterBefore(new AuthFilterR(authenticationManager()), BasicAuthenticationFilter.class);
-
+            
 	}
 
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 	    return super.authenticationManagerBean();
+	}
+	
+	@Bean
+	public AuthFilterR authFilter( AuthenticationManager authmanager ){
+		return new AuthFilterR( authmanager );
 	}
 
     @Override
@@ -79,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Bean
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
-        return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        return new UnauthorizedEntryPoint();
     }
 	
 }

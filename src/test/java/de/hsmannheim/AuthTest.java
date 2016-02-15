@@ -41,7 +41,7 @@ public class AuthTest {
     @Before
     public void setup() {
         System.out.println( port );
-        RestAssured.baseURI = "https://localhost";
+        RestAssured.baseURI = "http://localhost";
        // RestAssured.keystore(keystoreFile, keystorePass);
         RestAssured.port = port;
         //Mockito.reset(mockedExternalServiceAuthenticator, mockedServiceGateway);

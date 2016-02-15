@@ -1,14 +1,10 @@
 package de.hsmannheim.security;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,18 +15,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-public class AuthFilterR extends GenericFilterBean {
+public class AuthFilterR extends OncePerRequestFilter {
 
-AuthenticationManager authenticationManager;
+	AuthenticationManager authenticationManager;
 
     public AuthFilterR(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationManager=authenticationManager;
     }
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    
+    @Autowired
+	public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = asHttp(request);
         HttpServletResponse httpResponse = asHttp(response);
+        
+        System.out.println("comme herer");
+        System.out.println( SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
 
         try {
             chain.doFilter(request, response);
@@ -50,6 +50,13 @@ AuthenticationManager authenticationManager;
     private HttpServletResponse asHttp(ServletResponse response) {
         return (HttpServletResponse) response;
     }
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }
