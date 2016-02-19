@@ -15,7 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.activemq.artemis.utils.ByteUtil;
+//import org.apache.activemq.artemis.utils.ByteUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
@@ -54,7 +54,7 @@ public class FilterR implements Filter {
 //		bis.read(b);
 //		
 //		System.out.println( hash.checkHash( b, req.getHeader("hash")) );
-//		chain.doFilter(request, response);
+		chain.doFilter(request, response);
 	}
 
 	@Override

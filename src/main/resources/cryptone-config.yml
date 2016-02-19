@@ -1,0 +1,13 @@
+jwt:
+    secret : secret
+keylenght:
+    rsa: 512
+    aes: 512
+resources:
+    users: /users
+        id: /users/:userId
+        friends: /users/friends
+    documents : /documents
+        id : /documents/:documentId
+    friends: /friends
+        id : /friends/:friendId

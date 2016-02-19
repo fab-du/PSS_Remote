@@ -24,6 +24,7 @@ public class Session extends  AbstEntity {
 	@Type(type="text")
 	String accessToken;
 	Long expiresIn;
+
 	public String getEmail() {
 		return email;
 	}
@@ -80,6 +81,4 @@ public class Session extends  AbstEntity {
 	public void setExpiresIn(Long l) {
 		this.expiresIn = l;
 	}
-
-	
 }
