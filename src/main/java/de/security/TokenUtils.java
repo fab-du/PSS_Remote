@@ -1,21 +1,23 @@
 package de.security;
 
 import de.hsmannheim.cryptolocal.models.Session;
-
+import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import io.jsonwebtoken.Jwts; 
 import io.jsonwebtoken.SignatureAlgorithm; 
-import io.jsonwebtoken.Claims; 
-import io.jsonwebtoken.ClaimJwtException;
-import io.jsonwebtoken.MissingClaimException;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.Claims;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TokenUtils {
 
-    @Value("${jwt.secret}")
-    private String secret;
+	@Autowired
+	RepositorySession repositorySession;
 
     public Session parseToken( String token ){
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    	System.out.println( token );
+    	Session session = repositorySession.findOneByToken(token);
+    	String B = session.getB();
+        Claims claims = Jwts.parser().setSigningKey( B ).parseClaimsJws(token).getBody();
         return this.claimsToSessionObj( claims );
     }
 
@@ -24,15 +26,15 @@ public class TokenUtils {
 
         Claims claims = Jwts.claims().setSubject( session.getEmail( ));
         claims.setId( session.getId().toString() );
-        claims.put( "clientPubKey" ,  session.getClientPubkey()); 
         claims.put( "hash", session.getHashValue() );
 
         return Jwts.builder()
                    .setClaims( claims )
-                   .signWith( SignatureAlgorithm.HS512, secret ) 
+                   .signWith( SignatureAlgorithm.HS512, session.getB() ) 
                    .compact();
     }
 
+    
     private Session claimsToSessionObj( Claims claim ){
         Session session = new Session();
         String email = claim.getSubject();

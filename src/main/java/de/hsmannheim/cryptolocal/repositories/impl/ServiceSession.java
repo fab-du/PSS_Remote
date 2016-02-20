@@ -43,8 +43,8 @@ public class ServiceSession {
 	public static final int SCHEDULE_TIME = 36000; 
 
 
-	public boolean userExists( Long userId ){
-		return repositoryuser.exists( userId );
+	public Session userExists( String email ){
+		return repositorysession.findOneByEmail(email);
 	}
 	
 	public boolean register( Map<String, String> user){
@@ -74,7 +74,6 @@ public class ServiceSession {
  		/* set key pair */
  		newuser.setKeypair(keytosave);
 
-
  		if( user.get("salt") != null && user.get("verifier") != null ){
  			 SrpCredential srpcredentials = new SrpCredential( user.get("email"),  user.get("salt"), user.get("verifier"), "user" );
 			 repositorysrpcredential.save(srpcredentials);
@@ -93,9 +92,6 @@ public class ServiceSession {
 		Session session = new Session();
 		session.setEmail(sessionData.get("email"));
 		session.setB(sessionData.get("B"));
-		session.setExpiresIn(System.currentTimeMillis());
-		session.setAccessToken(new BigInteger(SRP6VerifierGenerator.generateRandomSalt()).toString() );
-		session.setClientPubkey(sessionData.get("client_pubkey"));
 		repositorysession.save(session);
 	}
 	
@@ -107,29 +103,21 @@ public class ServiceSession {
 	public void deletEpiredSession(){
 		Iterable<Session> activeSessions = repositorysession.findAll();
 
-		for (Session session : activeSessions) {
-				Long expire_in = session.getExpiresIn();
-
-				if( this.isExpired(expire_in) ){
-					repositorysession.delete(session.getId());
-				}
-		}
+//		for (Session session : activeSessions) {
+//				Long expire_in = session.getExpiresIn();
+//
+//				if( this.isExpired(expire_in) ){
+//					repositorysession.delete(session.getId());
+//				}
+//		}
 	}
 	
 	@Scheduled(fixedRate= SCHEDULE_TIME)
 	public void removeExpiredSession(){
-		log.info("remove expired token from database");
-		this.deletEpiredSession();
-	}
-	
-	public boolean isAuthenticate( String token ){
-		boolean ret = false;		
-		return ret; 
+		//log.info("remove expired token from database");
+		//this.deletEpiredSession();
 	}
 	
 	public void logout( String token ){
-		Session session = repositorysession.findOneByAccessToken(token);
-		if( token != null ) 
-			repositorysession.delete(session);
 	}
 }

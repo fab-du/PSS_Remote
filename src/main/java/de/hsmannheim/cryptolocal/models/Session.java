@@ -11,20 +11,11 @@ public class Session extends  AbstEntity {
 	@Type(type="text")
 	String B;
 	@Type(type="text")
-	String xsrfToken;
-	@Type(type="text")
-	String clientPubkey;
-	@Type(type="text")
-	String serverPubkey;
-	@Type(type="text")
-	String serverPrikey;
-	String headerAuthorization; 
-	@Type(type="text")
 	String salt;
-	@Type(type="text")
-	String accessToken;
-	Long expiresIn;
 
+	@Type(type="text")
+	String token;
+	
 	public String getEmail() {
 		return email;
 	}
@@ -37,30 +28,6 @@ public class Session extends  AbstEntity {
 	public void setB(String b) {
 		B = b;
 	}
-	public String getXsrfToken() {
-		return xsrfToken;
-	}
-	public void setXsrfToken(String xsrfToken) {
-		this.xsrfToken = xsrfToken;
-	}
-	public String getClientPubkey() {
-		return clientPubkey;
-	}
-	public void setClientPubkey(String clientPubkey) {
-		this.clientPubkey = clientPubkey;
-	}
-	public String getServerPubkey() {
-		return serverPubkey;
-	}
-	public void setServerPubkey(String serverPubkey) {
-		this.serverPubkey = serverPubkey;
-	}
-	public String getHeaderAuthorization() {
-		return headerAuthorization;
-	}
-	public void setHeaderAuthorization(String headerAuthorization) {
-		this.headerAuthorization = headerAuthorization;
-	}
 
 	public String getSalt() {
 		return salt;
@@ -68,17 +35,17 @@ public class Session extends  AbstEntity {
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
+	
+	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	@Override
+	public String toString() {
+		return "Session [email=" + email + ", B=" + B + ", salt=" + salt + "]";
+	}
 
-	public String getAccessToken() {
-		return accessToken;
-	}
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-	public Long getExpiresIn() {
-		return expiresIn;
-	}
-	public void setExpiresIn(Long l) {
-		this.expiresIn = l;
-	}
 }

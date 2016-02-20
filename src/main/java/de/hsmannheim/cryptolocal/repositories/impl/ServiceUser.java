@@ -14,16 +14,17 @@ import org.springframework.stereotype.Service;
 
 
 import de.hsmannheim.cryptolocal.models.User;
+import de.hsmannheim.cryptolocal.models.Session;
 import de.hsmannheim.cryptolocal.models.SrpCredential;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
+import de.security.TokenUtils;
+import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
 //import de.cryptone.crypto.CryptFactor;
 
 import com.nimbusds.srp6.SRP6CryptoParams;
 import com.nimbusds.srp6.SRP6ServerSession;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.KeySpec;
@@ -38,6 +39,9 @@ import java.security.spec.PKCS8EncodedKeySpec;
 public class ServiceUser  {
 
 	SRP6ServerSession  srpSession;
+	
+	@Autowired
+	RepositorySession repositorySession;
 	
 	@Autowired
 	private RepositoryUsers repositoryuser;
@@ -137,6 +141,14 @@ public class ServiceUser  {
 
 			result.put("B", B.toString());
 			result.put("salt", srp.getSalt());
+			
+			// save session 
+			Session session = new Session();
+			session.setEmail(email);
+			session.setB( B.toString());
+			session.setSalt( srp.getSalt());
+			repositorySession.save(session);
+			
 			return result;
 	}
 
@@ -149,34 +161,36 @@ public class ServiceUser  {
 
           String A = authdata.get("A");
           String M1 =  authdata.get("M1");
-          
+
           try {
 				  evidence = srpSession.step2( new BigInteger(A) , new BigInteger(M1) );
+				  System.out.println("======" + evidence.toString());
 				  result.put("evidence",  evidence.toString());
 				  User user = this.findByEmail( authdata.get("email"));
 				  result.put("currentUserId", user.getId().toString());
 				  result.put("email", user.getEmail());
-				  System.out.println( user.getId().toString());
+				  
 				  HttpHeaders responseHeaders = new HttpHeaders();
-				  responseHeaders.set( "jss", "toto" );
-				 responseHeaders.set("Authorization", "Authorization");
+				  
+				  //session stuff
+				  Session session = repositorySession.findOneByEmail( user.getEmail() );
+				  TokenUtils tokenUtils = new TokenUtils();
+				  String token =  tokenUtils.generateToken(session);
+				  session.setToken(token);
+				  repositorySession.save(session);
+				  responseHeaders.set("Authorization", "Bearer " + token);
+				 
 				 return new ResponseEntity<Map<String,String>>(result, responseHeaders, HttpStatus.OK);
 				  
           	  } catch (Exception e) {
-          		  result.put("error", e.getMessage());
+          		  System.out.println( e.getCause());
+          		System.out.println("===================================");
+          		System.out.println("===================================");
+          		result.put("error", e.getMessage());
           		  return 
           			new ResponseEntity<Map<String,String>>(result, HttpStatus.UNAUTHORIZED);
 		      }
 
 	}
-
 	
-	private String jwt( String claims, PrivateKey key ){
-		String token = 
-		Jwts.builder().claim("claims", claims).signWith(SignatureAlgorithm.RS512, key ).compact();
-		System.out.println( token );
-		return token;
-	}
-
-
 }

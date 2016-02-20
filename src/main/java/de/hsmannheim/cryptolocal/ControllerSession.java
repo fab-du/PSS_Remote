@@ -55,27 +55,15 @@ public class ControllerSession {
 		return null;
 	}
 	
-	@RequestMapping(value="/free", method=RequestMethod.GET)
-	@ResponseBody
-	public String session(){
-		System.out.println("comme hreeee");
-		return new String("Session");
-	}
-
 	@RequestMapping( value="/login/authenticate", method = RequestMethod.POST )
 	public ResponseEntity<Map<String, String>> login( @RequestBody Map<String, String> authdata,
 			HttpServletResponse response) throws Exception{
-		System.out.println("authentication");
-
-		Map<String, String > result = null;
-
-		try {
-			ResponseEntity<Map<String, String>> ret =  serviceuser.step2( authdata);
-			return ret;
+	try {
+			return  serviceuser.step2( authdata);
 		} catch (Exception e) {
 			Map<String, String> errorMessage = new HashMap<String, String>();
 			errorMessage.put("AUTH_ERROR", "Authentication failure");
-			return new ResponseEntity<Map<String,String>>( errorMessage, HttpStatus.FORBIDDEN );
+			return new ResponseEntity<Map<String,String>>( errorMessage, HttpStatus.UNAUTHORIZED );
 		}
 
 	}

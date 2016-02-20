@@ -94,7 +94,6 @@ public class Application{
             return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
-
 	}
 	
 //	@Override

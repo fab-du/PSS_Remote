@@ -1,23 +1,28 @@
 package de.security;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
+
+import de.hsmannheim.cryptolocal.models.Session;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import java.io.IOException;
 
-import de.hsmannheim.exceptions.JwtException;
 
 public class AuthFilter extends GenericFilterBean {
 
+	HttpServletResponse httpResponse;
     AuthenticationManager authManager;
 
     public AuthFilter( AuthenticationManager authManager ){
@@ -30,12 +35,13 @@ public class AuthFilter extends GenericFilterBean {
 
         System.out.println("FooFilter");
         HttpServletRequest httpRequest = asHttp( request );
-        HttpServletResponse httpResponse = asHttp( response );
+         httpResponse = asHttp( response );
 
         String authorizationToken = (String)httpRequest.getHeader("Authorization");
-
+        System.out.println( authorizationToken );
         if (authorizationToken == null || !authorizationToken.startsWith("Bearer ")) {
-            throw new JwtException("No JWT token found in request headers");
+        	httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        	return;
         }
 
         String token = authorizationToken.substring(7);
@@ -56,20 +62,21 @@ public class AuthFilter extends GenericFilterBean {
 
     private void processTokenAuthentication(String token) {
             Authentication resultOfAuthentication = tryToAuthenticateWithToken(token);
-            System.out.println( resultOfAuthentication.isAuthenticated());
             SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
     }
 
 
     private Authentication tryToAuthenticateWithToken( String token ){
-        PreAuthenticatedAuthenticationToken requestAuthentication = new PreAuthenticatedAuthenticationToken(token, null);
+    	TokenUtils tokenUtils = new TokenUtils();
+    	Session session = tokenUtils.parseToken(token);
+        PreAuthenticatedAuthenticationToken requestAuthentication = new PreAuthenticatedAuthenticationToken(session, null);
         return tryToAuthenticate(requestAuthentication);
     }
 
     private Authentication tryToAuthenticate( Authentication requestAuthentication ){
         Authentication responseAuthentication  = authManager.authenticate( requestAuthentication );
         if (responseAuthentication == null || !responseAuthentication.isAuthenticated()) {
-            throw new InternalAuthenticationServiceException("Unable to authenticate Domain User for provided credentials");
+           return responseAuthentication;
         }
 
         return responseAuthentication;
