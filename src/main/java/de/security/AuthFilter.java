@@ -35,17 +35,20 @@ public class AuthFilter extends GenericFilterBean {
 
         System.out.println("FooFilter");
         HttpServletRequest httpRequest = asHttp( request );
-         httpResponse = asHttp( response );
+        httpResponse = asHttp( response );
 
         String authorizationToken = (String)httpRequest.getHeader("Authorization");
         System.out.println( authorizationToken );
+
         if (authorizationToken == null || !authorizationToken.startsWith("Bearer ")) {
         	httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         	return;
         }
 
         String token = authorizationToken.substring(7);
-
+        System.out.println( "=========================================");
+        System.out.println( token );
+        
 
         this.processTokenAuthentication( token );
 

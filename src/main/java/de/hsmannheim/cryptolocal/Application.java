@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Controller;
@@ -61,6 +62,10 @@ public class Application{
 	@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 	protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+		public SecurityConfiguration() {
+			super(false);
+		}
+		
 		@Override
 		public void configure(WebSecurity web) throws Exception {
           web.ignoring().antMatchers("/free", "/session/**", "/error");
@@ -72,7 +77,9 @@ public class Application{
 			.antMatchers("/index.html", "/", "/login", "/message", "/home", "/free", "/session/**")
 			.permitAll().anyRequest().authenticated().and().csrf().disable()
 			.addFilterBefore( authProcessingFilter( this.authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint());
+            .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint())
+            .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().anonymous();
 		}
 
 		private Filter authProcessingFilter( AuthenticationManager authManager ) {

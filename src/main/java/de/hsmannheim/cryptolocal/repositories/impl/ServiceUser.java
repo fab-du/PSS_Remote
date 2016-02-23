@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 
 import de.hsmannheim.cryptolocal.models.User;
+import de.hsmannheim.cryptolocal.models.forms.FormAuthentication;
+import de.hsmannheim.cryptolocal.models.forms.FormChallengeResponse;
+import de.hsmannheim.cryptolocal.models.forms.FormLoginAuthenticateResponse;
 import de.hsmannheim.cryptolocal.models.Session;
 import de.hsmannheim.cryptolocal.models.SrpCredential;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
@@ -39,21 +42,15 @@ import java.security.spec.PKCS8EncodedKeySpec;
 public class ServiceUser  {
 
 	SRP6ServerSession  srpSession;
-	
 	@Autowired
 	RepositorySession repositorySession;
-	
 	@Autowired
 	private RepositoryUsers repositoryuser;
-	
 	@Autowired
 	RepositorySrpCredential repositorysrpcredential;
-
-
 	@Autowired
 	ServiceGroup servicegroup;
 	
-
 	public User findByEmail( String email ){
 		return repositoryuser.findOneByEmail(email);
 	}
@@ -106,12 +103,14 @@ public class ServiceUser  {
 	}
 
 	public boolean usereExists( String email ){
-		
 		if( email == null ) return false;
 		
-		if (email.trim().equals( repositoryuser.findOneByEmail(email.trim()).getEmail()) ){
-			return true;
-		}
+		User user = repositoryuser.findOneByEmail(email.trim());
+		
+		if ( user == null || user.getEmail() == null ) return false;
+		
+		if (email.trim().equals( user.getEmail()) ) return true;
+
 		return false;
 	}
 
@@ -121,57 +120,51 @@ public class ServiceUser  {
 		
 	}
 
-	public Map<String, String> step1(String email) throws Exception {
+	public FormChallengeResponse step1(String email) throws Exception{
 		
 		if( !this.usereExists(email)) return null; 
 		
 		SRP6CryptoParams config = SRP6CryptoParams.getInstance();
-
 		SrpCredential srp = repositorysrpcredential.findOneByEmail(email);
-
 		if( srp == null ) return null;
 
 		srpSession = new SRP6ServerSession(config);
-			
 
-			BigInteger B = srpSession.step1(srp.getEmail(), new BigInteger( srp.getSalt()), 
+		BigInteger B = srpSession.step1(srp.getEmail(), new BigInteger( srp.getSalt()), 
 						new BigInteger( srp.getVerifier() ) );
 
-			Map<String, String > result = new HashMap<String, String>();
-
-			result.put("B", B.toString());
-			result.put("salt", srp.getSalt());
+		if ( B == null )
+			throw new java.lang.Exception("B didnt computed properly ");
 			
-			// save session 
-			Session session = new Session();
-			session.setEmail(email);
-			session.setB( B.toString());
-			session.setSalt( srp.getSalt());
-			repositorySession.save(session);
-			
-			return result;
+		// save session 
+		Session session = new Session();
+		session.setEmail(email);
+		session.setB( B.toString());
+		session.setSalt( srp.getSalt());
+		repositorySession.save(session);
+		
+		return new FormChallengeResponse(B.toString(), srp.getSalt());
 	}
 
-	public ResponseEntity<Map<String, String>> 
-		step2(Map<String, String> authdata ) throws Exception {
+	public ResponseEntity<FormLoginAuthenticateResponse> 
+		step2(FormAuthentication authdata ) throws Exception {
 	
+		if( authdata == null || authdata.getA() == null || authdata.getM1() == null
+			|| authdata.getEmail() == null )
+			throw new java.lang.Exception("No data provided for authentication");
+		
 		  BigInteger evidence = null;
-		  Map<String, String > result = 
-				  new HashMap<String, String>();
-
-          String A = authdata.get("A");
-          String M1 =  authdata.get("M1");
-
+		  FormLoginAuthenticateResponse result = new FormLoginAuthenticateResponse();
           try {
-				  evidence = srpSession.step2( new BigInteger(A) , new BigInteger(M1) );
-				  System.out.println("======" + evidence.toString());
-				  result.put("evidence",  evidence.toString());
-				  User user = this.findByEmail( authdata.get("email"));
-				  result.put("currentUserId", user.getId().toString());
-				  result.put("email", user.getEmail());
+        	  evidence = srpSession.step2( new BigInteger(authdata.getA()) , new BigInteger(authdata.getM1()) );
+				  
+				  User user = this.findByEmail( authdata.getEmail());
+				  
+				  result.setEmail(user.getEmail());
+				  result.setCurrentUserId(user.getId().toString());
+				  result.setEvidence(evidence.toString());
 				  
 				  HttpHeaders responseHeaders = new HttpHeaders();
-				  
 				  //session stuff
 				  Session session = repositorySession.findOneByEmail( user.getEmail() );
 				  TokenUtils tokenUtils = new TokenUtils();
@@ -180,16 +173,15 @@ public class ServiceUser  {
 				  repositorySession.save(session);
 				  responseHeaders.set("Authorization", "Bearer " + token);
 				 
-				 return new ResponseEntity<Map<String,String>>(result, responseHeaders, HttpStatus.OK);
+				 return new ResponseEntity<FormLoginAuthenticateResponse>(result, responseHeaders, HttpStatus.OK);
 				  
           	  } catch (Exception e) {
           		  System.out.println( e.getCause());
           		System.out.println("===================================");
           		System.out.println("===================================");
-          		result.put("error", e.getMessage());
-          		  return 
-          			new ResponseEntity<Map<String,String>>(result, HttpStatus.UNAUTHORIZED);
-		      }
+    			throw new java.lang.Exception("No data provided for authentication");
+
+          	  }
 
 	}
 	

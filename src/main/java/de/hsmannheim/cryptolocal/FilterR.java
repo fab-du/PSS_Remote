@@ -54,9 +54,11 @@ public class FilterR implements Filter {
 //		bis.read(b);
 //		
 //		System.out.println( hash.checkHash( b, req.getHeader("hash")) );
+		System.out.println( ((HttpServletRequest)request).getRequestURI());
 		chain.doFilter(request, response);
 	}
 
+	
 	@Override
 	public void destroy() {
 	}

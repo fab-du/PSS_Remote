@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
 import de.hsmannheim.cryptolocal.models.User;
+import de.hsmannheim.cryptolocal.models.forms.FormAuthentication;
+import de.hsmannheim.cryptolocal.models.forms.FormChallengeResponse;
+import de.hsmannheim.cryptolocal.models.forms.FormLoginAuthenticateResponse;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceUser;
 
@@ -36,36 +41,24 @@ public class ControllerSession {
 
 
 	@RequestMapping( value="/login/challenge", method = RequestMethod.POST, consumes="application/json" )
-	public ResponseEntity<Map<String, String>> login_challenge( @RequestBody Map<String, String> email  ){
-		
-		boolean userExist = serviceuser.usereExists(email.get("email"));
-			if( userExist == true ){
-			 Map<String, String> result = new HashMap<String, String>();
+	public ResponseEntity<FormChallengeResponse> login_challenge( @RequestBody Map<String, String> challenge  ) throws Exception{
+	
+	//if user not in system
+	String email = challenge.get("email");
+	if( email == null || !serviceuser.usereExists(email) )
+		throw new AuthenticationCredentialsNotFoundException("No data provided");
 
-			 try {
-				result = serviceuser.step1( email.get("email") );
-			} catch (Exception e) {
-				e.printStackTrace();
-				return new ResponseEntity<Map<String,String>>( HttpStatus.OK );
-			}
-
-			 return new ResponseEntity<Map<String,String>>(result, HttpStatus.ACCEPTED);
-		}
-
-		return null;
+	//if user already authenticated 
+	if ( serviceSession.userExists(email) != null )
+		throw new Exception("User already authenticated");
+	
+		return new ResponseEntity<FormChallengeResponse>( 
+					serviceuser.step1(email), HttpStatus.OK);
 	}
 	
 	@RequestMapping( value="/login/authenticate", method = RequestMethod.POST )
-	public ResponseEntity<Map<String, String>> login( @RequestBody Map<String, String> authdata,
-			HttpServletResponse response) throws Exception{
-	try {
-			return  serviceuser.step2( authdata);
-		} catch (Exception e) {
-			Map<String, String> errorMessage = new HashMap<String, String>();
-			errorMessage.put("AUTH_ERROR", "Authentication failure");
-			return new ResponseEntity<Map<String,String>>( errorMessage, HttpStatus.UNAUTHORIZED );
-		}
-
+	public ResponseEntity<FormLoginAuthenticateResponse> login( @RequestBody FormAuthentication authdata) throws Exception{
+		return  serviceuser.step2( authdata );
 	}
 
 	@RequestMapping( value="/register", method = RequestMethod.POST )
@@ -80,5 +73,22 @@ public class ControllerSession {
 	public ResponseEntity<LinkedHashMap<String, String>> 
 	logout(){
 		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+	public ResponseEntity<Map<String, String>>
+	exceptionHandler(){
+		Map<String, String> errorMessage = new HashMap<String, String>();
+		errorMessage.put("message", "Error while trying loggin in");
+		return new ResponseEntity<Map<String,String>>(errorMessage, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Map<String, String>>
+	exceptionHandler( Exception ex ){
+		System.out.println( ex.getLocalizedMessage() );
+		Map<String, String> errorMessage = new HashMap<String, String>();
+		errorMessage.put("message", ex.getMessage());
+		return new ResponseEntity<Map<String,String>>(errorMessage, HttpStatus.BAD_REQUEST);
 	}
 }
