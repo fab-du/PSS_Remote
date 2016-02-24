@@ -76,14 +76,14 @@ public class Application{
 			http.httpBasic().and().authorizeRequests()
 			.antMatchers("/index.html", "/", "/login", "/message", "/home", "/free", "/session/**")
 			.permitAll().anyRequest().authenticated().and().csrf().disable()
-			.addFilterBefore( authProcessingFilter( this.authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore( authProcessingFilter( this.authenticationManager(), this.tokenUtils()), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint())
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().anonymous();
 		}
 
-		private Filter authProcessingFilter( AuthenticationManager authManager ) {
-            return new AuthFilter( authManager );
+		private Filter authProcessingFilter( AuthenticationManager authManager, TokenUtils tokenUtils ) {
+            return new AuthFilter( authManager, tokenUtils );
 		}
 
         @Override
@@ -94,6 +94,11 @@ public class Application{
         @Bean
         public AuthenticationProvider tokenAuthenticationProvider() {
             return new AuthProvider();
+        }
+        
+        @Bean 
+        public TokenUtils tokenUtils(){
+        	return new TokenUtils();
         }
 
         @Bean

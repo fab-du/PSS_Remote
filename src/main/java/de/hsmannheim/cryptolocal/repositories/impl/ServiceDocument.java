@@ -87,11 +87,6 @@ public boolean save( Form_Document doc, HttpServletRequest request, MultipartFil
 			}
 		}
 
-		if( noError ){
-			
-		}
-
-	
 	return noError;
 }
 

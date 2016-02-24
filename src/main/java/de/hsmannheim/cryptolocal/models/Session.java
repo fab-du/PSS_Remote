@@ -43,9 +43,10 @@ public class Session extends  AbstEntity {
 	public void setToken(String token) {
 		this.token = token;
 	}
+	
 	@Override
 	public String toString() {
-		return "Session [email=" + email + ", B=" + B + ", salt=" + salt + "]";
+		return "Session [email=" + email + ", B=" + B + ", salt=" + salt + ", token=" + token + "]";
 	}
-
+	
 }

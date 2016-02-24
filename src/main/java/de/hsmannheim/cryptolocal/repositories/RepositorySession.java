@@ -7,5 +7,4 @@ import java.lang.String;
 public interface RepositorySession extends JpaRepository<Session, Long> {
 	Session findOneByEmail(String email);
 	Session findOneByToken(String token);
-
 }

@@ -1,18 +1,13 @@
 package de.hsmannheim.cryptolocal.repositories.impl;
 import java.math.BigInteger;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-
 import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.models.forms.FormAuthentication;
 import de.hsmannheim.cryptolocal.models.forms.FormChallengeResponse;
@@ -23,11 +18,8 @@ import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
 import de.security.TokenUtils;
 import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
-//import de.cryptone.crypto.CryptFactor;
-
 import com.nimbusds.srp6.SRP6CryptoParams;
 import com.nimbusds.srp6.SRP6ServerSession;
-
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.KeySpec;
@@ -36,7 +28,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 /*
  * crypto
  */
-
 @Service
 @Transactional
 public class ServiceUser  {

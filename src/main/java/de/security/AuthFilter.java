@@ -3,7 +3,6 @@ package de.security;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
@@ -15,30 +14,31 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import java.io.IOException;
+import java.util.Enumeration;
 
 
 public class AuthFilter extends GenericFilterBean {
-
+   	TokenUtils tokenUtils;
 	HttpServletResponse httpResponse;
     AuthenticationManager authManager;
 
-    public AuthFilter( AuthenticationManager authManager ){
+    public AuthFilter( AuthenticationManager authManager, TokenUtils tokenUtils ){
         this.authManager = authManager;
+        this.tokenUtils = tokenUtils;
     }
 
     @Override
     public void doFilter(ServletRequest request,ServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+    	
         System.out.println("FooFilter");
         HttpServletRequest httpRequest = asHttp( request );
         httpResponse = asHttp( response );
-
+        this.printAllheader(httpRequest);
         String authorizationToken = (String)httpRequest.getHeader("Authorization");
-        System.out.println( authorizationToken );
 
         if (authorizationToken == null || !authorizationToken.startsWith("Bearer ")) {
         	httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -58,7 +58,6 @@ public class AuthFilter extends GenericFilterBean {
     private HttpServletRequest asHttp(ServletRequest request) {
         return (HttpServletRequest) request;
     }
-
     private HttpServletResponse asHttp(ServletResponse response) {
         return (HttpServletResponse) response;
     }
@@ -70,7 +69,6 @@ public class AuthFilter extends GenericFilterBean {
 
 
     private Authentication tryToAuthenticateWithToken( String token ){
-    	TokenUtils tokenUtils = new TokenUtils();
     	Session session = tokenUtils.parseToken(token);
         PreAuthenticatedAuthenticationToken requestAuthentication = new PreAuthenticatedAuthenticationToken(session, null);
         return tryToAuthenticate(requestAuthentication);
@@ -85,4 +83,15 @@ public class AuthFilter extends GenericFilterBean {
         return responseAuthentication;
     }
 
+    void printAllheader( HttpServletRequest req ){
+    	Enumeration<String> headers = req.getHeaderNames();
+    	String headername;
+        System.out.println( "=========================================");
+        System.out.println( "=========DEBUG===========================");
+    	while( (headername = headers.nextElement()) != null ){
+    		System.out.println(headername + ":" + req.getHeader(headername));
+    	}
+    }
 }
+
+

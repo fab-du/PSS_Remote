@@ -3,6 +3,7 @@ package de.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import de.hsmannheim.cryptolocal.models.Session;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
@@ -18,22 +19,27 @@ public class AuthProvider implements AuthenticationProvider{
 	@Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Session principal = (Session)authentication.getPrincipal();
-        
+        System.out.println( "========================");
+        System.out.println( principal);
         Session issuer = serviceSession.userExists( principal.getEmail() );
         
-        if( this.isAuthenticate(principal, issuer))
-        	return (Authentication)issuer;
-        		return null;
+        return this.isAuthenticate(principal, issuer);
     }
    
    
-   protected boolean isAuthenticate( Session principal, Session issuer ){
+   protected Authentication isAuthenticate( Session principal, Session issuer ){
 	   if(
-			principal.getB().trim().equals(issuer.getB().trim()) &&
+			principal.getId().equals(issuer.getId()) &&
 			principal.getEmail().trim().equals( issuer.getEmail().trim()) 
 	     )
-		  return true;
-	   		return false;
+	   {
+		   return new PreAuthenticatedAuthenticationToken(issuer, null);
+//		   AuthModel auth = new AuthModel();
+//		   auth.setId( issuer.getId() );
+//		   auth.setEmail( issuer.getEmail());
+//		   return (Authentication) auth;
+	   }
+	   		return null;
    }
  
     @Override

@@ -43,8 +43,16 @@ public class ServiceSession {
 	public static final int SCHEDULE_TIME = 36000; 
 
 
-	public Session userExists( String email ){
-		return repositorysession.findOneByEmail(email);
+	/*
+	 * searchStrin := email or token
+	 */
+	public Session userExists( String searchString ){
+		Session session1 = repositorysession.findOneByEmail(searchString);
+		Session session2 = repositorysession.findOneByToken(searchString);
+	
+		if ( session1 != null ) return session1;
+		if( session2 != null ) return session2;
+		return null;
 	}
 	
 	public boolean register( Map<String, String> user){
