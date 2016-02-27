@@ -16,6 +16,8 @@ public class Session extends  AbstEntity {
 	@Type(type="text")
 	String token;
 	
+	Long expires;
+	
 	public String getEmail() {
 		return email;
 	}
@@ -42,6 +44,14 @@ public class Session extends  AbstEntity {
 	}
 	public void setToken(String token) {
 		this.token = token;
+	}
+	
+	public Long getExpires() {
+		return expires;
+	}
+
+	public void setExpires(Long expires) {
+		this.expires = expires;
 	}
 	
 	@Override

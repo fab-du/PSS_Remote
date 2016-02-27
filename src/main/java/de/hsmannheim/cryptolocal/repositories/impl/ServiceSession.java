@@ -1,22 +1,14 @@
 package de.hsmannheim.cryptolocal.repositories.impl;
 
-import java.math.BigInteger;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.nimbusds.srp6.SRP6VerifierGenerator;
-
-import de.hsmannheim.cryptolocal.models.Group;
 import de.hsmannheim.cryptolocal.models.KeyPair;
 import de.hsmannheim.cryptolocal.models.Session;
 import de.hsmannheim.cryptolocal.models.SrpCredential;
 import de.hsmannheim.cryptolocal.models.User;
+import de.hsmannheim.cryptolocal.models.forms.FormRegister;
 import de.hsmannheim.cryptolocal.repositories.RepositoryKeyPair;
 import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
@@ -32,16 +24,15 @@ public class ServiceSession {
 	private RepositoryUsers repositoryuser;
 	@Autowired
 	private RepositoryKeyPair repositorykeypair;
-
 	@Autowired
 	RepositorySrpCredential repositorysrpcredential;
-
 	@Autowired
 	private RepositorySession repositorysession;
 	
 	private final static Logger log = LoggerFactory.getLogger( ServiceSession.class);
-	public static final int SCHEDULE_TIME = 36000; 
-
+	
+	public static final int SCHEDULE_TIME = 5 * 60 * 1000; // 5 min 
+	public static final int SESSION_TIME  = SCHEDULE_TIME * 2; // 10 min
 
 	/*
 	 * searchStrin := email or token
@@ -49,58 +40,46 @@ public class ServiceSession {
 	public Session userExists( String searchString ){
 		Session session1 = repositorysession.findOneByEmail(searchString);
 		Session session2 = repositorysession.findOneByToken(searchString);
-	
-		if ( session1 != null ) return session1;
-		if( session2 != null ) return session2;
+		
+		if ( session1 != null ) return session1; else{}
+		if ( session2 != null ) return session2; else{}
 		return null;
 	}
 	
-	public boolean register( Map<String, String> user){
+	public boolean register( FormRegister user) throws Exception{
 
-		User existinguser = repositoryuser.findOneByEmail(user.get("email"));
-
-		if( existinguser != null  ){
-			return false;
-		}
+	if (repositoryuser.findOneByEmail(user.getEmail()) != null )
+		throw new Exception("User already exists");
 
 		User newuser = new User();
-		newuser.setCompany( user.get("company"));
-		newuser.setFirstname(user.get("firstname"));
-		newuser.setSecondname(user.get("secondname"));
-		newuser.setEmail( user.get("email"));
+		newuser.setCompany(user.getCompany());
+		newuser.setFirstname(user.getFirstname());
+		newuser.setSecondname(user.getSecondname());
+		newuser.setEmail(user.getEmail());
 
 		repositoryuser.save(newuser);
 
 		KeyPair keytosave = new KeyPair();
-		keytosave.setPrikey(user.get("prikey"));
-		keytosave.setPubkey(user.get("pubkey"));
-		keytosave.setSalt(user.get("pairkeySalt"));
+		keytosave.setPrikey(user.getPrikey());
+		keytosave.setPubkey(user.getPubkey());
+		keytosave.setSalt(user.getSalt());
 		
  		repositorykeypair.save( keytosave );
 
- 		newuser = repositoryuser.findOneByEmail(user.get("email"));
+ 		newuser = repositoryuser.findOneByEmail(user.getEmail());
  		/* set key pair */
  		newuser.setKeypair(keytosave);
 
- 		if( user.get("salt") != null && user.get("verifier") != null ){
- 			 SrpCredential srpcredentials = new SrpCredential( user.get("email"),  user.get("salt"), user.get("verifier"), "user" );
+ 	if( user.getSalt() != null && user.getVerifier() != null ){
+ 	  SrpCredential srpcredentials = 
+ 	    new SrpCredential( user.getEmail(),  
+ 	    	user.getSalt(), user.getVerifier(), "user" );
 			 repositorysrpcredential.save(srpcredentials);
 			 newuser.setSrp(srpcredentials);
 			 repositoryuser.save(newuser);
  		}
 
-		Group group = new Group();
-		group.setName( user.get("firstname") + "_private_group");
- 		//servicegroup.save(group, newuser.getId(), true);
-
 		return true;
-	}
-	
-	private void saveSession( Map<String, String> sessionData ){
-		Session session = new Session();
-		session.setEmail(sessionData.get("email"));
-		session.setB(sessionData.get("B"));
-		repositorysession.save(session);
 	}
 	
 	protected boolean isExpired( Long expireIn  ){
@@ -108,24 +87,23 @@ public class ServiceSession {
 		return ( expireIn <= currentTimeMilli );
 	}
 	
-	public void deletEpiredSession(){
-		Iterable<Session> activeSessions = repositorysession.findAll();
+	public void deleteEpiredSession(){
+		Long currentDateTime = new Date().getTime();
+		Iterable<Session> expiredSessions = 
+		repositorysession.findByExpiresLessThan( currentDateTime );
 
-//		for (Session session : activeSessions) {
-//				Long expire_in = session.getExpiresIn();
-//
-//				if( this.isExpired(expire_in) ){
-//					repositorysession.delete(session.getId());
-//				}
-//		}
+		for (Session session : expiredSessions) {
+			repositorysession.delete(session.getId());
+		}
 	}
 	
 	@Scheduled(fixedRate= SCHEDULE_TIME)
 	public void removeExpiredSession(){
-		//log.info("remove expired token from database");
-		//this.deletEpiredSession();
+		log.info("remove expired token from database");
+		this.deleteEpiredSession();
 	}
 	
-	public void logout( String token ){
+	public void logout( String token ) throws Exception{
+		repositorysession.deleteByToken(token);
 	}
 }

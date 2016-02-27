@@ -1,7 +1,6 @@
 package de.security;
 
 import de.hsmannheim.cryptolocal.models.Session;
-import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import io.jsonwebtoken.Jwts; 
 import io.jsonwebtoken.SignatureAlgorithm; 
@@ -19,9 +18,13 @@ public class TokenUtils {
 	@Autowired
 	ServiceSession repositorySession;
 
-    public Session parseToken( String token ){
+    public Session parseToken( String token ) throws Exception{
     	System.out.println(repositorySession);
     	Session session = repositorySession.userExists(token.trim());
+    
+    	if ( session == null )
+    		throw new Exception("No active session found");
+    	
     	String B = session.getB();
         Claims claims = Jwts.parser().setSigningKey( B ).parseClaimsJws(token).getBody();
         return this.claimsToSessionObj( claims );
@@ -40,7 +43,6 @@ public class TokenUtils {
                    .compact();
     }
 
-    
     private Session claimsToSessionObj( Claims claim ){
         Session session = new Session();
         
@@ -51,5 +53,6 @@ public class TokenUtils {
         session.setEmail( email );
         return session;
     }
+    
 
 }

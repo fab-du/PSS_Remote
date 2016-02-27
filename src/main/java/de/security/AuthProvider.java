@@ -22,7 +22,6 @@ public class AuthProvider implements AuthenticationProvider{
         System.out.println( "========================");
         System.out.println( principal);
         Session issuer = serviceSession.userExists( principal.getEmail() );
-        
         return this.isAuthenticate(principal, issuer);
     }
    

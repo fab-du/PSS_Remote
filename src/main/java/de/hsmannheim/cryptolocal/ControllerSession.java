@@ -3,31 +3,26 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 
-import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.models.forms.FormAuthentication;
 import de.hsmannheim.cryptolocal.models.forms.FormChallengeResponse;
 import de.hsmannheim.cryptolocal.models.forms.FormLoginAuthenticateResponse;
+import de.hsmannheim.cryptolocal.models.forms.FormRegister;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceUser;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.RsaSigner;
-import java.security.Key;
 
 @RestController
 @RequestMapping(value="/session")
@@ -63,15 +58,28 @@ public class ControllerSession {
 
 	@RequestMapping( value="/register", method = RequestMethod.POST )
 	public ResponseEntity<LinkedHashMap<String, String>> 
-	register( @RequestBody Map<String, String> newregister ) throws RestClientException, Exception{
+	register( @RequestBody FormRegister newregister ) throws RestClientException, Exception{
 			boolean ret = serviceSession.register(newregister);
 			if ( ret ) return new ResponseEntity<LinkedHashMap<String,String>>( HttpStatus.CREATED );
 			return new ResponseEntity<LinkedHashMap<String,String>>( HttpStatus.OK );
 	}
 
 	@RequestMapping( value="/logout", method = RequestMethod.POST )
-	public ResponseEntity<LinkedHashMap<String, String>> 
-	logout(){
+	public ResponseEntity<?> 
+	logout( @RequestHeader(value="Authorization") String
+	Auth, @RequestHeader(value="authorization") String auth) throws Exception{
+		
+		String authToken = null;
+		
+		if( auth != null  ){
+			authToken = auth;
+		}
+		else if ( Auth != null ){
+			authToken = Auth;
+		}else{}
+		
+		if ( authToken != null )
+			serviceSession.logout( authToken.split(" ")[1].trim() );
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
@@ -82,7 +90,7 @@ public class ControllerSession {
 		errorMessage.put("message", "Error while trying loggin in");
 		return new ResponseEntity<Map<String,String>>(errorMessage, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Map<String, String>>
 	exceptionHandler( Exception ex ){

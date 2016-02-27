@@ -95,13 +95,9 @@ public class ServiceUser  {
 
 	public boolean usereExists( String email ){
 		if( email == null ) return false;
-		
 		User user = repositoryuser.findOneByEmail(email.trim());
-		
-		if ( user == null || user.getEmail() == null ) return false;
-		
-		if (email.trim().equals( user.getEmail()) ) return true;
-
+		if ((user == null) || (user.getEmail() == null)) return false;
+		if (email.trim().equals( user.getEmail())) return true;
 		return false;
 	}
 
@@ -120,7 +116,6 @@ public class ServiceUser  {
 		if( srp == null ) return null;
 
 		srpSession = new SRP6ServerSession(config);
-
 		BigInteger B = srpSession.step1(srp.getEmail(), new BigInteger( srp.getSalt()), 
 						new BigInteger( srp.getVerifier() ) );
 
@@ -161,9 +156,9 @@ public class ServiceUser  {
 				  TokenUtils tokenUtils = new TokenUtils();
 				  String token =  tokenUtils.generateToken(session);
 				  session.setToken(token);
+				  session.setExpires( new java.util.Date().getTime() + ServiceSession.SESSION_TIME );
 				  repositorySession.save(session);
 				  responseHeaders.set("Authorization", "Bearer " + token);
-				 
 				 return new ResponseEntity<FormLoginAuthenticateResponse>(result, responseHeaders, HttpStatus.OK);
 				  
           	  } catch (Exception e) {

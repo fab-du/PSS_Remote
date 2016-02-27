@@ -39,6 +39,10 @@ public class AuthFilter extends GenericFilterBean {
         httpResponse = asHttp( response );
         this.printAllheader(httpRequest);
         String authorizationToken = (String)httpRequest.getHeader("Authorization");
+        
+        this.printAllheader(httpRequest);
+        if ( authorizationToken == null )
+             authorizationToken = (String)httpRequest.getHeader("authorization");
 
         if (authorizationToken == null || !authorizationToken.startsWith("Bearer ")) {
         	httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -54,7 +58,7 @@ public class AuthFilter extends GenericFilterBean {
 
         filterChain.doFilter(request, response);
     }
-
+    
     private HttpServletRequest asHttp(ServletRequest request) {
         return (HttpServletRequest) request;
     }
@@ -67,9 +71,13 @@ public class AuthFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
     }
 
-
     private Authentication tryToAuthenticateWithToken( String token ){
-    	Session session = tokenUtils.parseToken(token);
+    	Session session;
+		try {
+			session = tokenUtils.parseToken(token);
+		} catch (Exception e) {
+			return null;
+		}
         PreAuthenticatedAuthenticationToken requestAuthentication = new PreAuthenticatedAuthenticationToken(session, null);
         return tryToAuthenticate(requestAuthentication);
     }

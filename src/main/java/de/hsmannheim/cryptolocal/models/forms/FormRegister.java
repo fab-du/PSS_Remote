@@ -1,19 +1,32 @@
 package de.hsmannheim.cryptolocal.models.forms;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 public class FormRegister {
+	@NotNull
 	String email;
+	@NotNull
 	String firstname;
+	@NotNull
 	String secondname;
+	@NotNull
 	String company;
+	
+	@Nullable
+	String password;
+	@Nullable
 	String passphrase;
-
+	
+	@NotNull
 	String verifier;
+	@NotNull
 	String salt;
-
+	@NotNull
 	String pubkey;
-	String prikey;
-	String pairkeySalt;
-
+	@NotNull
+	String prikey; 
+	
 	public String getEmail() {
 		return email;
 	}
@@ -37,6 +50,13 @@ public class FormRegister {
 	}
 	public void setCompany(String company) {
 		this.company = company;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	public String getPassphrase() {
 		return passphrase;
@@ -68,21 +88,12 @@ public class FormRegister {
 	public void setPrikey(String prikey) {
 		this.prikey = prikey;
 	}
-
 	
-	public String getPairkeySalt() {
-		return pairkeySalt;
-	}
-	public void setPairkeySalt(String pairkeySalt) {
-		this.pairkeySalt = pairkeySalt;
-	}
 	@Override
 	public String toString() {
 		return "FormRegister [email=" + email + ", firstname=" + firstname + ", secondname=" + secondname + ", company="
-				+ company + ", passphrase=" + passphrase + ", verifier=" + verifier + ", salt=" + salt + ", pubkey="
-				+ pubkey + ", prikey=" + prikey + "]";
+				+ company + ", password=" + password + ", passphrase=" + passphrase + ", verifier=" + verifier
+				+ ", salt=" + salt + ", pubkey=" + pubkey + ", prikey=" + prikey + "]";
 	}
 
-
-	
 }
