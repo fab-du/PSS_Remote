@@ -149,6 +149,7 @@ public class ServiceUser  {
 				  result.setEmail(user.getEmail());
 				  result.setCurrentUserId(user.getId().toString());
 				  result.setEvidence(evidence.toString());
+				  result.setCurrentUserPublicKey( user.getKeypair().getPubkey() );
 				  
 				  HttpHeaders responseHeaders = new HttpHeaders();
 				  //session stuff
@@ -160,15 +161,10 @@ public class ServiceUser  {
 				  repositorySession.save(session);
 				  responseHeaders.set("Authorization", "Bearer " + token);
 				 return new ResponseEntity<FormLoginAuthenticateResponse>(result, responseHeaders, HttpStatus.OK);
-				  
+				 
           	  } catch (Exception e) {
           		  System.out.println( e.getCause());
-          		System.out.println("===================================");
-          		System.out.println("===================================");
-    			throw new java.lang.Exception("No data provided for authentication");
-
+          		  throw new java.lang.Exception("No data provided for authentication");
           	  }
-
 	}
-	
 }

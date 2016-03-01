@@ -3,6 +3,8 @@ package de.hsmannheim.cryptolocal.models.forms;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
+import de.hsmannheim.cryptolocal.models.Group;
+
 public class FormRegister {
 	@NotNull
 	String email;
@@ -27,6 +29,14 @@ public class FormRegister {
 	@NotNull
 	String prikey; 
 	
+	Group group;
+	
+	public Group getGroup() {
+		return group;
+	}
+	public void setGroup(Group group) {
+		this.group = group;
+	}
 	public String getEmail() {
 		return email;
 	}

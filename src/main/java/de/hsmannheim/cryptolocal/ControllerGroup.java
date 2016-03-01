@@ -44,6 +44,7 @@ public class ControllerGroup {
 
 	@RequestMapping( method= RequestMethod.POST )
 	public ResponseEntity<?>  create( @RequestBody Group group){
+		System.out.println("comme hererer");
 		return servicegroup.create(group, true);
 	}
 

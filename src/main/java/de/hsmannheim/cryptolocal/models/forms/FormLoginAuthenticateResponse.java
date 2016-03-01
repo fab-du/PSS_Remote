@@ -1,10 +1,11 @@
 package de.hsmannheim.cryptolocal.models.forms;
 
 public class FormLoginAuthenticateResponse {
+	
 	String currentUserId;
 	String email;
 	String evidence;
-	
+	String currentUserPublicKey;
 	
 	public FormLoginAuthenticateResponse() {
 		super();
@@ -26,5 +27,12 @@ public class FormLoginAuthenticateResponse {
 	}
 	public void setEvidence(String evidence) {
 		this.evidence = evidence;
+	}
+	
+	public String getCurrentUserPublicKey() {
+		return currentUserPublicKey;
+	}
+	public void setCurrentUserPublicKey(String currentUserPublicKey) {
+		this.currentUserPublicKey = currentUserPublicKey;
 	}
 }

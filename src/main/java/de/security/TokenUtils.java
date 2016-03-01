@@ -5,9 +5,7 @@ import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
 import io.jsonwebtoken.Jwts; 
 import io.jsonwebtoken.SignatureAlgorithm; 
 import io.jsonwebtoken.Claims;
-
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +17,8 @@ public class TokenUtils {
 	ServiceSession repositorySession;
 
     public Session parseToken( String token ) throws Exception{
-    	System.out.println(repositorySession);
+    	
     	Session session = repositorySession.userExists(token.trim());
-    
     	if ( session == null )
     		throw new Exception("No active session found");
     	
@@ -53,6 +50,5 @@ public class TokenUtils {
         session.setEmail( email );
         return session;
     }
-    
 
 }

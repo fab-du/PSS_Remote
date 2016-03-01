@@ -28,6 +28,8 @@ public class ServiceSession {
 	RepositorySrpCredential repositorysrpcredential;
 	@Autowired
 	private RepositorySession repositorysession;
+	@Autowired
+	ServiceGroup serviceGroup;
 	
 	private final static Logger log = LoggerFactory.getLogger( ServiceSession.class);
 	
@@ -56,17 +58,17 @@ public class ServiceSession {
 		newuser.setFirstname(user.getFirstname());
 		newuser.setSecondname(user.getSecondname());
 		newuser.setEmail(user.getEmail());
-
 		repositoryuser.save(newuser);
 
 		KeyPair keytosave = new KeyPair();
 		keytosave.setPrikey(user.getPrikey());
 		keytosave.setPubkey(user.getPubkey());
 		keytosave.setSalt(user.getSalt());
-		
  		repositorykeypair.save( keytosave );
 
  		newuser = repositoryuser.findOneByEmail(user.getEmail());
+ 		user.getGroup().setGvid(newuser.getId());
+ 		serviceGroup.create( user.getGroup(), true);
  		/* set key pair */
  		newuser.setKeypair(keytosave);
 

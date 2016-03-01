@@ -7,10 +7,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import javax.persistence.OneToOne;
 import java.util.Set;
 import java.util.HashSet;
@@ -19,11 +16,6 @@ import java.util.HashSet;
 @Table(name="users")
 public class User extends AbstEntity{
 
-	/*
-	 * user : 
-	 * 		 - email
-	 * 		 - company
-	 */
 	@NotBlank
 	String firstname;
 	
@@ -57,7 +49,6 @@ public class User extends AbstEntity{
 	 * user pairkeys
 	 */
 	@OneToOne
-	@JsonIgnore
 	KeyPair keypair;
 
 	@OneToOne(cascade=CascadeType.ALL)
