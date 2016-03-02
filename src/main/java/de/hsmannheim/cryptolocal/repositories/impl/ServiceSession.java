@@ -75,7 +75,7 @@ public class ServiceSession {
  	if( user.getSalt() != null && user.getVerifier() != null ){
  	  SrpCredential srpcredentials = 
  	    new SrpCredential( user.getEmail(),  
- 	    	user.getSalt(), user.getVerifier(), "user" );
+ 	    	user.getSrpsalt(), user.getVerifier(), "user" );
 			 repositorysrpcredential.save(srpcredentials);
 			 newuser.setSrp(srpcredentials);
 			 repositoryuser.save(newuser);

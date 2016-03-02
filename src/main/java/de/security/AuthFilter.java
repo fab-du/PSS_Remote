@@ -53,7 +53,6 @@ public class AuthFilter extends GenericFilterBean {
         System.out.println( "=========================================");
         System.out.println( token );
         
-
         this.processTokenAuthentication( token );
 
         filterChain.doFilter(request, response);

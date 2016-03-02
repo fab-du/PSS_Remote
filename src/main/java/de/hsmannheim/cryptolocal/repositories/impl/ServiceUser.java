@@ -12,10 +12,12 @@ import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.models.forms.FormAuthentication;
 import de.hsmannheim.cryptolocal.models.forms.FormChallengeResponse;
 import de.hsmannheim.cryptolocal.models.forms.FormLoginAuthenticateResponse;
+import de.hsmannheim.cryptolocal.models.Group;
 import de.hsmannheim.cryptolocal.models.Session;
 import de.hsmannheim.cryptolocal.models.SrpCredential;
 import de.hsmannheim.cryptolocal.repositories.RepositoryUsers;
 import de.security.TokenUtils;
+import de.hsmannheim.cryptolocal.repositories.RepositoryGroup;
 import de.hsmannheim.cryptolocal.repositories.RepositorySession;
 import de.hsmannheim.cryptolocal.repositories.RepositorySrpCredential;
 import com.nimbusds.srp6.SRP6CryptoParams;
@@ -36,11 +38,13 @@ public class ServiceUser  {
 	@Autowired
 	RepositorySession repositorySession;
 	@Autowired
-	private RepositoryUsers repositoryuser;
+	RepositoryUsers repositoryuser;
 	@Autowired
 	RepositorySrpCredential repositorysrpcredential;
 	@Autowired
 	ServiceGroup servicegroup;
+	@Autowired
+	RepositoryGroup repositoryGroup;
 	
 	public User findByEmail( String email ){
 		return repositoryuser.findOneByEmail(email);
@@ -142,14 +146,17 @@ public class ServiceUser  {
 		  BigInteger evidence = null;
 		  FormLoginAuthenticateResponse result = new FormLoginAuthenticateResponse();
           try {
-        	  evidence = srpSession.step2( new BigInteger(authdata.getA()) , new BigInteger(authdata.getM1()) );
-				  
+        	  	  evidence = srpSession.step2( new BigInteger(authdata.getA()) , new BigInteger(authdata.getM1()) );
+				  System.out.println( evidence.toString() );
 				  User user = this.findByEmail( authdata.getEmail());
 				  
 				  result.setEmail(user.getEmail());
 				  result.setCurrentUserId(user.getId().toString());
 				  result.setEvidence(evidence.toString());
 				  result.setCurrentUserPublicKey( user.getKeypair().getPubkey() );
+				  
+				  Group group = repositoryGroup.findOneByName( authdata.getEmail().trim() + "_privateGroup" );
+				  result.setCurrentUserGroupId(group.getId());
 				  
 				  HttpHeaders responseHeaders = new HttpHeaders();
 				  //session stuff

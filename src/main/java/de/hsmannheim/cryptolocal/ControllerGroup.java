@@ -44,7 +44,6 @@ public class ControllerGroup {
 
 	@RequestMapping( method= RequestMethod.POST )
 	public ResponseEntity<?>  create( @RequestBody Group group){
-		System.out.println("comme hererer");
 		return servicegroup.create(group, true);
 	}
 
@@ -59,9 +58,8 @@ public class ControllerGroup {
 	}
 	
 	@RequestMapping( value="/users/{userId}", method= RequestMethod.GET )
-	public ResponseEntity<Set<Group>>  find_where_user_group(@PathVariable(value="userId") Long userId ){
-		System.out.println("comme hreer");
-		return servicegroup.findUserGroup(userId);
+	public ResponseEntity<List<Group>>  find_where_user_group(@PathVariable(value="userId") Long userId ){
+		return servicegroup.findWhereUserIsGV(userId);
 	}
 	
 	@RequestMapping( value="/{groupId}/documents", method = RequestMethod.GET)
@@ -81,7 +79,7 @@ public class ControllerGroup {
 		return servicegroup.groupId_documents_documentId(groupId, documentId);
 	}
 	
-	@RequestMapping( value="/{groupId}/documents/{documentId}/download", method = RequestMethod.GET )
+	@RequestMapping( value="/{groupId}/documents/{documentId}/download/{document}", method = RequestMethod.GET )
 	public ResponseEntity<InputStreamResource> groupId_documents_documentId_download( @PathVariable(value="groupId") Long groupId,
 			@PathVariable(value="documentId") Long documentId ) throws IOException{
 		File file = new File("deployment.jpg");

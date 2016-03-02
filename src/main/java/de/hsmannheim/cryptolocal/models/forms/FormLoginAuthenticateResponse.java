@@ -7,8 +7,17 @@ public class FormLoginAuthenticateResponse {
 	String evidence;
 	String currentUserPublicKey;
 	
+    Long currenUserGroupId;
+	
 	public FormLoginAuthenticateResponse() {
 		super();
+	}
+	
+	public Long getCurrentUserGroupId(){
+		return currenUserGroupId;
+	}
+	public void setCurrentUserGroupId( Long currentUserGroupId ){
+		this.currenUserGroupId = currentUserGroupId;
 	}
 	public String getCurrentUserId() {
 		return currentUserId;

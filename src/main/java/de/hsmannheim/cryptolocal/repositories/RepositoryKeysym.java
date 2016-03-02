@@ -5,8 +5,5 @@ import java.lang.String;
 
 
 public interface RepositoryKeysym extends JpaRepository<KeySym, Long> {
-
-public KeySym findOneBySymkey(String symkey);
-
-
+	public KeySym findOneBySymkey(String symkey);
 }

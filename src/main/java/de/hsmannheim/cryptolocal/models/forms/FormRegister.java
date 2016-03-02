@@ -28,12 +28,22 @@ public class FormRegister {
 	String pubkey;
 	@NotNull
 	String prikey; 
+	String srpsalt;
 	
 	Group group;
 	
 	public Group getGroup() {
 		return group;
 	}
+	
+	public void setSrpsalt( String srpsalt ){
+		this.srpsalt = srpsalt;
+	}
+	
+	public String getSrpsalt(){
+		return srpsalt;
+	}
+	
 	public void setGroup(Group group) {
 		this.group = group;
 	}

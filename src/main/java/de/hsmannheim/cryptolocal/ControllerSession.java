@@ -94,7 +94,7 @@ public class ControllerSession {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Map<String, String>>
 	exceptionHandler( Exception ex ){
-		System.out.println( ex.getLocalizedMessage() );
+		System.out.println( ex.getMessage());
 		Map<String, String> errorMessage = new HashMap<String, String>();
 		errorMessage.put("message", ex.getMessage());
 		return new ResponseEntity<Map<String,String>>(errorMessage, HttpStatus.BAD_REQUEST);

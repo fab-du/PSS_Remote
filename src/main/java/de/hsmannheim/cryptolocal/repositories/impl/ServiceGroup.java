@@ -97,30 +97,9 @@ public class ServiceGroup {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	public List<Group> findWhereUserIsGV( Long gvid ){
-		List<UserGroup> groups = repositoryusergroup.findByUseringroupId(gvid);
-		List<Group> result = new ArrayList<Group>();
-		
-		for( Iterator<UserGroup> it = groups.iterator(); it.hasNext(); ){
-			UserGroup obj = it.next();
-			if( obj.isGroupLead() ) result.add( repositorygroup.getOne( obj.getGroupId()));
-		}
-		
-		return  result; 
-	}
-
-	public ResponseEntity<Set<Group>> findUserGroup( long userid ){
-		List<UserGroup> usergroups = repositoryusergroup.findByUseringroupId(userid);
-		Set<Group> result = new HashSet<Group>();
-
-		for( Iterator<UserGroup> it = usergroups.iterator(); it.hasNext(); ){
-			UserGroup obj = it.next();
-			result.add( repositorygroup.getOne( obj.getGroupId()));
-		}
-		
-		if( result != null && !result.isEmpty())
-			return new ResponseEntity<Set<Group>>(result, HttpStatus.OK);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<List<Group>> findWhereUserIsGV( long userid ){
+		List<Group> result =  repositorygroup.findByGvid(userid);
+		return new ResponseEntity<List<Group>>(result, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Set<User>> users( Long groupid ){
