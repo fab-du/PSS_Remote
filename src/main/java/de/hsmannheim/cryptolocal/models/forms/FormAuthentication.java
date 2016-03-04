@@ -7,16 +7,18 @@ public class FormAuthentication {
 	String email;
 	String A;
 	String M1;
-	
+	String spubkey;
 	
 	
 	@JsonCreator
 	public FormAuthentication(@JsonProperty("email") String email,
 			@JsonProperty("A") String a, 
-			@JsonProperty("M1") String m1) {
+			@JsonProperty("M1") String m1,
+			@JsonProperty("spubkey") String spubkey) {
 		this.email = email;
 		A = a;
 		M1 = m1;
+		this.spubkey = spubkey;
 	}
 	
 	public String getA() {
@@ -38,6 +40,13 @@ public class FormAuthentication {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getSpubkey() {
+		return spubkey;
+	}
+	public void setSpubkey(String spubkey) {
+		this.spubkey = spubkey;
 	}
 
 	@Override

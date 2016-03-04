@@ -92,5 +92,4 @@ public class Group extends AbstEntity{
 	public void setGroupkey(KeySym groupkey) {
 		this.groupkey = groupkey;
 	}
-	
 }

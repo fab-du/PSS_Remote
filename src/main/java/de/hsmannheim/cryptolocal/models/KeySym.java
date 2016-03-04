@@ -24,10 +24,8 @@ public class KeySym extends AbstEntity{
 		this.symkey = symkey;
 	}
 
-
 	@Override
 	public String toString() {
 		return "KeySym [symkey=" + symkey + "]";
 	}
-
 }

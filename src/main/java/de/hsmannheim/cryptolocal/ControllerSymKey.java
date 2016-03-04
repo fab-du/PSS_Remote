@@ -18,9 +18,11 @@ public class ControllerSymKey {
 	@Autowired
 	RepositoryGroup repositoryGroup;
 	
-	@RequestMapping(value="/api/keysym/{groupId}", method= RequestMethod.GET )
+	@RequestMapping(value="/api/{groupId}/keysym", method= RequestMethod.GET )
 	public ResponseEntity<KeySym>  getGroupSymKey( @PathVariable(value="groupId") Long groupId ){
 		Group group = repositoryGroup.findOne(groupId);
+		System.out.println("=============================");
+		System.out.println( group.getGroupkey().toString() );
 		return new ResponseEntity<KeySym>( group.getGroupkey(), HttpStatus.OK  );
 	}
 	

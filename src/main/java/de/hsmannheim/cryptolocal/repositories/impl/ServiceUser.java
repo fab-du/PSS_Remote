@@ -164,6 +164,7 @@ public class ServiceUser  {
 				  TokenUtils tokenUtils = new TokenUtils();
 				  String token =  tokenUtils.generateToken(session);
 				  session.setToken(token);
+				  session.setPubkey( authdata.getSpubkey() );
 				  session.setExpires( new java.util.Date().getTime() + ServiceSession.SESSION_TIME );
 				  repositorySession.save(session);
 				  responseHeaders.set("Authorization", "Bearer " + token);

@@ -16,6 +16,9 @@ public class Session extends  AbstEntity {
 	@Type(type="text")
 	String token;
 	
+	@Type(type="text")
+	String pubkey;
+	
 	Long expires;
 	
 	public String getEmail() {
@@ -38,7 +41,6 @@ public class Session extends  AbstEntity {
 		this.salt = salt;
 	}
 	
-	
 	public String getToken() {
 		return token;
 	}
@@ -46,6 +48,12 @@ public class Session extends  AbstEntity {
 		this.token = token;
 	}
 	
+	public String getPubkey() {
+		return pubkey;
+	}
+	public void setPubkey(String pubkey) {
+		this.pubkey = pubkey;
+	}
 	public Long getExpires() {
 		return expires;
 	}
