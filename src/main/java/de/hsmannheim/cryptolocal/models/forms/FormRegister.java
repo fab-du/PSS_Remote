@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import de.hsmannheim.cryptolocal.models.Group;
+import de.hsmannheim.cryptolocal.models.KeySym;
 
 public class FormRegister {
 	@NotNull
@@ -31,6 +32,8 @@ public class FormRegister {
 	String srpsalt;
 	
 	Group group;
+	KeySym groupsymkey;
+
 	
 	public Group getGroup() {
 		return group;
@@ -39,11 +42,18 @@ public class FormRegister {
 	public void setSrpsalt( String srpsalt ){
 		this.srpsalt = srpsalt;
 	}
-	
 	public String getSrpsalt(){
 		return srpsalt;
 	}
 	
+	public KeySym getGroupsymkey() {
+		return groupsymkey;
+	}
+
+	public void setGroupsymkey(KeySym groupsymkey) {
+		this.groupsymkey = groupsymkey;
+	}
+
 	public void setGroup(Group group) {
 		this.group = group;
 	}

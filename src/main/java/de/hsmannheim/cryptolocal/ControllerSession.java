@@ -34,7 +34,6 @@ public class ControllerSession {
 	@Autowired
 	ServiceSession serviceSession;
 
-
 	@RequestMapping( value="/login/challenge", method = RequestMethod.POST, consumes="application/json" )
 	public ResponseEntity<FormChallengeResponse> login_challenge( @RequestBody Map<String, String> challenge  ) throws Exception{
 	

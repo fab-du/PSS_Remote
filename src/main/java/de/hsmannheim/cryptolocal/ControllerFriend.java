@@ -33,6 +33,7 @@ public class ControllerFriend {
 	
 	@RequestMapping( method=RequestMethod.POST )
 	public ResponseEntity<?> create( @PathVariable(value="userId") Long userId, @RequestBody Friendship friendship ){
+		System.out.println( friendship.toString());
 		return serviceFriend.create( userId , friendship );
 	}
 	

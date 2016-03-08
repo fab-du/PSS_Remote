@@ -24,13 +24,10 @@ public class ServiceFriend {
 
 	@Autowired
 	RepositoryFriend repositoryFriend;
-	
 	@Autowired
 	RepositoryGroup repositoryGroup;
-	
 	@Autowired
 	RepositoryUsers repositoryUser;
-	
 	@Autowired
 	ServiceGroup serviceGroup;
 	
@@ -39,16 +36,12 @@ public class ServiceFriend {
 	find( Long id ){
 	
 		User user = repositoryUser.findOne( id ); 
-		
 		if( user == null)
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		
 		Set<Friendship> friends = user.getFriends();
-		
 		Iterator<Friendship> it = friends.iterator();
-		
 		Set<User> result = new HashSet<User>();
-		
 		while( it.hasNext() ){
 			User friend = repositoryUser.findOne( it.next().getFriendId() );
 			result.add(friend);

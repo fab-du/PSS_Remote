@@ -175,7 +175,9 @@ public class ServiceGroup {
 
 	public ResponseEntity<Document> addDocument(Long groupId, MultipartFile file) throws IOException {
 		Group group = repositorygroup.findOne( groupId );
-		
+		System.out.println("upload document");
+		System.out.println("==========================");
+		System.out.println(file.getOriginalFilename());
 		if( group == null || file.isEmpty() )
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 

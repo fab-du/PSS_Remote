@@ -1,11 +1,10 @@
 package de.hsmannheim.cryptolocal.models;
-import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 
 @Entity
@@ -15,14 +14,13 @@ public class Friendship extends AbstEntity{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
 	
 	Long friendId;
 	
 	@ManyToOne
 	User users;
 	
+	@Type(type="text")
 	String signature;
 
 	public Long getFriendId() {
@@ -47,6 +45,11 @@ public class Friendship extends AbstEntity{
 
 	public void setSignature(String signature) {
 		this.signature = signature;
+	}
+
+	@Override
+	public String toString() {
+		return "Friendship [friendId=" + friendId + ", users=" + users + ", signature=" + signature + "]";
 	}
 	
 }

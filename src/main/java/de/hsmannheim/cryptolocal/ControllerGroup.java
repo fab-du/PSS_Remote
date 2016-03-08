@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import de.hsmannheim.cryptolocal.models.Document;
 import de.hsmannheim.cryptolocal.models.Group;
 import de.hsmannheim.cryptolocal.models.User;
+import de.hsmannheim.cryptolocal.repositories.RepositoryDocuments;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceGroup;
 
 @RestController
@@ -30,6 +31,9 @@ public class ControllerGroup {
 
 	@Autowired
 	private ServiceGroup servicegroup;
+	
+	@Autowired
+	private RepositoryDocuments repositorydoc;
 
 	@RequestMapping( method= RequestMethod.GET )
 	public ResponseEntity<List<Group>>  find( ){
@@ -81,8 +85,10 @@ public class ControllerGroup {
 	
 	@RequestMapping( value="/{groupId}/documents/{documentId}/download/{document}", method = RequestMethod.GET )
 	public ResponseEntity<InputStreamResource> groupId_documents_documentId_download( @PathVariable(value="groupId") Long groupId,
-			@PathVariable(value="documentId") Long documentId ) throws IOException{
-		File file = new File("deployment.jpg");
+			@PathVariable(value="documentId") Long documentId ) throws IOException, NullPointerException{
+		
+		Document doc = repositorydoc.findOne(documentId);
+		File file = new File( "uploads/" + doc.getPath() + "/" + doc.getName() );
 		
 		String mime = URLConnection.guessContentTypeFromName(file.getName());
 		HttpHeaders headers = new HttpHeaders();
