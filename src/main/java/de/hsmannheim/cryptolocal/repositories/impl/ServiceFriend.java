@@ -92,7 +92,7 @@ public class ServiceFriend {
 		_friends.add(friendship);
 		_user.setFriends( _friends );
 		repositoryUser.save( _user );
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	public
@@ -125,7 +125,7 @@ public class ServiceFriend {
 			friends.remove( _friendship );
 			user.setFriends(friends);
 			repositoryUser.save(user);
-			return new ResponseEntity<>( HttpStatus.OK);	
+			return new ResponseEntity<>( HttpStatus.ACCEPTED);	
 		}
 		else{
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);	

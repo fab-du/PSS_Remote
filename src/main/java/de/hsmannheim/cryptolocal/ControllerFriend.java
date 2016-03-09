@@ -17,7 +17,6 @@ import de.hsmannheim.cryptolocal.repositories.impl.ServiceFriend;
 @RestController
 @RequestMapping(value = "/api/{userId}/friends"  )
 public class ControllerFriend {
-	
 	@Autowired
 	ServiceFriend serviceFriend; 
 	
@@ -32,8 +31,8 @@ public class ControllerFriend {
 	}
 	
 	@RequestMapping( method=RequestMethod.POST )
+	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> create( @PathVariable(value="userId") Long userId, @RequestBody Friendship friendship ){
-		System.out.println( friendship.toString());
 		return serviceFriend.create( userId , friendship );
 	}
 	
@@ -42,12 +41,10 @@ public class ControllerFriend {
 		return serviceFriend.revoke(userId, friendId);
 	}
 	
-	//TODORe
 	@RequestMapping( value="/{friendId}/addToGroup/{groupId}", method=RequestMethod.PUT )
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> friendId_users_userId_addToGroup( @PathVariable(value="userId") Long userId, 
 			@PathVariable(value="friendId") Long friendId, @PathVariable(value="groupId") Long groupId  ){
-		System.out.println( friendId + "-"+ groupId + "-" +userId);
 		return serviceFriend.addFriendToGroup(friendId, userId, groupId);
 	}
 

@@ -83,6 +83,7 @@ public class ServiceGroup {
 		usergroup.setUseringroupId(user.getId());
 		usergroup.setGroupId(group.getId());
 		usergroup.setGroupLead(isLead);
+		usergroup.setKeysym(group.getGroupkey());
 		usergroup =repositoryusergroup.save(usergroup);
 
 		Set<UserGroup> _users = group.getUsers();
@@ -175,9 +176,6 @@ public class ServiceGroup {
 
 	public ResponseEntity<Document> addDocument(Long groupId, MultipartFile file) throws IOException {
 		Group group = repositorygroup.findOne( groupId );
-		System.out.println("upload document");
-		System.out.println("==========================");
-		System.out.println(file.getOriginalFilename());
 		if( group == null || file.isEmpty() )
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
