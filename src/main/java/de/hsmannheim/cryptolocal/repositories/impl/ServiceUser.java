@@ -154,6 +154,7 @@ public class ServiceUser  {
 				  result.setCurrentUserId(user.getId().toString());
 				  result.setEvidence(evidence.toString());
 				  result.setCurrentUserPublicKey( user.getKeypair().getPubkey() );
+				  result.setUserkeypair(user.getKeypair());
 				  
 				  Group group = repositoryGroup.findOneByName( authdata.getEmail().trim() + "_privateGroup" );
 				  result.setCurrentUserGroupId(group.getId());

@@ -40,12 +40,7 @@ public class ServiceSession {
 	 * searchStrin := email or token
 	 */
 	public Session userExists( String searchString ){
-		Session session1 = repositorysession.findOneByEmail(searchString);
-		Session session2 = repositorysession.findOneByToken(searchString);
-		
-		if ( session1 != null ) return session1; else{}
-		if ( session2 != null ) return session2; else{}
-		return null;
+		return repositorysession.findOneByEmailOrToken(searchString, searchString);
 	}
 	
 	public boolean register( FormRegister user) throws Exception{
