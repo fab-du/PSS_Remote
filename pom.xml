@@ -8,6 +8,8 @@
 	<artifactId>hsmannheim</artifactId>
 	<name>Remote Server</name>
 	<description>Demo project for Spring Boot</description>
+    <packaging>war</packaging>
+
 
 	
 	<parent>
@@ -20,7 +22,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+        <start-class>de.hsmannheim.cryptlocal.Application</start-class>
 	</properties>
+
+
 
 	<dependencies>
 			 <dependency>
@@ -28,11 +33,11 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 	
-<!-- 	    <dependency>
+ 	    <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
-        </dependency> -->
+        </dependency> 
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
