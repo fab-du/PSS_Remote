@@ -7,8 +7,6 @@ public class UserGroupId implements Serializable{
 	private long useringroupId;
 	private long groupId;
 
-	
-
 	public long getUseringroupId() {
 		return useringroupId;
 	}

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.lang.Exception;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,16 +104,6 @@ public class ServiceGroup {
 		return new ResponseEntity<List<Group>>(result, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Set<User>> users( Long groupid ){
-		Group group = repositorygroup.getOne(groupid);
-		String groupname = group.getName();
-		Set<User> mitglieder =  this.findMitglieder(groupname);
-				
-		if( group == null )
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			return new ResponseEntity<Set<User>>( mitglieder, HttpStatus.OK);
-	}
-	
 	public ResponseEntity<Set<Document>> documents( Long groupid ){
 		Group group = repositorygroup.getOne(groupid);
 
@@ -120,15 +111,24 @@ public class ServiceGroup {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
 		Set<Document> documents = group.getDocuments();
-		documents.forEach((Document doc)-> System.out.println(doc.toString()));
-		
 		if( documents == null )
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			return new ResponseEntity<Set<Document>>( documents, HttpStatus.OK);
 	}
 
-	public Set<User> findMitglieder( String groupname ){
+	public Set<User> findMitgliederByGroupId( Long groupId ) throws Exception{
+		Group group = repositorygroup.getOne(groupId);
+        if ( group == null )
+			throw new Exception("No groups with id:" +  groupId );
+        return this.findMitglieder(group.getName());
+    }
+
+	public Set<User> findMitglieder( String groupname ) throws Exception{
 		Group group = repositorygroup.findOneByName(groupname);
+
+        if ( group == null )
+			throw new Exception("No groups with name:" + groupname );
+
 		Set<UserGroup> usergroup = group.getUsers();
 		Set<User> ret = new HashSet<User>();
 
@@ -136,29 +136,24 @@ public class ServiceGroup {
 			UserGroup obj = it.next();
 			ret.add( repositoryuser.getOne( obj.getUseringroupId() )); 
 		}
-
 		return ret;
 	}
 
 	
-	public ResponseEntity<?> addUser( User user, Long groupId ){
+	public ResponseEntity<?> addUser( Long userId, Long groupId, KeySym symkey ){
 		Group group = repositorygroup.findOne( groupId ); 
+		User _user = repositoryuser.findOne( userId );
 		
-		if( group == null || user == null)
+		if( group == null || _user == null)
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
-		System.out.println( user.getId());
-		User _user = repositoryuser.findOne( user.getId() );
-		
-		if ( _user == null )
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		
 		UserGroup usergroup = new UserGroup();
 		usergroup.setUsers(_user);
 		usergroup.setGroups(group);
 		usergroup.setUseringroupId(_user.getId());
 		usergroup.setGroupId(group.getId());
 		usergroup.setGroupLead(false);
+        usergroup.setKeysym( symkey );
 		usergroup=repositoryusergroup.save(usergroup);
 		
 		Set<UserGroup> _users = group.getUsers();
@@ -192,15 +187,13 @@ public class ServiceGroup {
 		while((read=is.read(bytes)) != -1){
 			fos.write(bytes, 0, read);
 		}
-		
-		Document document = this.saveDocument(group, file.getOriginalFilename());
-		
 		is.close();
 		fos.close();
-		
+
+		Document document = this.saveDocument(group, file.getOriginalFilename());
 		if( document != null )
 			return new ResponseEntity<Document>(document, HttpStatus.CREATED);
-				return new ResponseEntity<Document>(HttpStatus.OK);
+			return new ResponseEntity<Document>(HttpStatus.OK);
 	}
 	
 	private Document saveDocument( Group group, String filename ){
@@ -221,9 +214,9 @@ public class ServiceGroup {
 		Group group;
 		
 		if( groupId == null || 
-				documentId == null || 
-				( group= repositorygroup.findOne(groupId)) == null)
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			documentId == null || 
+			( group= repositorygroup.findOne(groupId)) == null)
+		        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
 		Set<Document> documents = group.getDocuments();
 		
@@ -256,7 +249,6 @@ public class ServiceGroup {
 				System.out.println("Upload group dir already exists");
 			}
 		}
-		
 	}
 
 }

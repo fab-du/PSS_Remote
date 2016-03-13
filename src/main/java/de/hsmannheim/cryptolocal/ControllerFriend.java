@@ -45,7 +45,12 @@ public class ControllerFriend {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> friendId_users_userId_addToGroup( @PathVariable(value="userId") Long userId, 
 			@PathVariable(value="friendId") Long friendId, @PathVariable(value="groupId") Long groupId  ){
-		return serviceFriend.addFriendToGroup(friendId, userId, groupId);
+        return null;
+		//return serviceFriend.addFriendToGroup(friendId, userId, groupId);
 	}
+	/**
+	 * 
+	 */
+	
 
 }

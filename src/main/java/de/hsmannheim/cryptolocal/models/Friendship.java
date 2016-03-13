@@ -10,11 +10,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name="friend")
 public class Friendship extends AbstEntity{
-	
-	/**
-	 * 
-	 */
-	
+
 	Long friendId;
 	
 	@ManyToOne
@@ -51,5 +47,4 @@ public class Friendship extends AbstEntity{
 	public String toString() {
 		return "Friendship [friendId=" + friendId + ", users=" + users + ", signature=" + signature + "]";
 	}
-	
 }

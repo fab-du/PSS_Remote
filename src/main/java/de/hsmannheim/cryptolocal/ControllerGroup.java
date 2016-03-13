@@ -3,6 +3,7 @@ package de.hsmannheim.cryptolocal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.Exception;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +26,7 @@ import de.hsmannheim.cryptolocal.models.Group;
 import de.hsmannheim.cryptolocal.models.User;
 import de.hsmannheim.cryptolocal.repositories.RepositoryDocuments;
 import de.hsmannheim.cryptolocal.repositories.impl.ServiceGroup;
+import de.hsmannheim.cryptolocal.models.KeySym;
 
 @RestController
 @RequestMapping(value = "/api/groups", produces = MediaType.APPLICATION_JSON_VALUE )
@@ -52,13 +55,14 @@ public class ControllerGroup {
 	}
 
 	@RequestMapping(value="/{groupId}/users", method= RequestMethod.GET )
-	public ResponseEntity<Set<User>>  users( @PathVariable(value="groupId") Long groupid ){
-		return servicegroup.users(groupid);
+    @ResponseBody 
+	public Set<User>  users( @PathVariable(value="groupId") Long groupId ) throws Exception{
+		return servicegroup.findMitgliederByGroupId(groupId);
 	}
 	
-	@RequestMapping( value="/{groupId}/users", method = RequestMethod.POST )
-	public ResponseEntity<?> addUser( @PathVariable(value="groupId") Long groupId,@RequestBody User user ){
-		return servicegroup.addUser(user, groupId);
+	@RequestMapping( value="/{groupId}/users/{userId}", method = RequestMethod.POST )
+	public ResponseEntity<?> addUser( @PathVariable(value="groupId") Long groupId, @PathVariable( value="userId") Long userId, @RequestBody KeySym symkey ){
+		return servicegroup.addUser(userId, groupId, symkey);
 	}
 	
 	@RequestMapping( value="/users/{userId}", method= RequestMethod.GET )

@@ -133,6 +133,8 @@ public class ServiceFriend {
 	}
 	
 	
+    //@Deprecated
+    //TODO
 	public ResponseEntity<?> addFriendToGroup( Long friendId, Long gvId, Long groupId ){
 		boolean gvExist = repositoryUser.exists(gvId);
 		Group group = repositoryGroup.findOne(groupId);
@@ -143,6 +145,7 @@ public class ServiceFriend {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
 		
 		User friend = repositoryUser.findOne( friendId );
-		return serviceGroup.addUser( friend, groupId);
+        return null;
+	 //   return serviceGroup.addUser( friend, groupId, );
 	}
 }

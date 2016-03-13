@@ -90,6 +90,4 @@ public class UserGroup implements Serializable{
 	public void setGroups(Group groups) {
 		this.groups = groups;
 	}
-
-
 }
