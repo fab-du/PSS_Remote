@@ -3,7 +3,7 @@ package de.security;
 import java.util.Collection;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import de.hsmannheim.cryptolocal.models.Session;
+import de.app.model.Session;
 
 public class AuthModel extends Session implements Authentication  {
 

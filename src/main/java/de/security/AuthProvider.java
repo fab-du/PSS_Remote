@@ -5,8 +5,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import de.hsmannheim.cryptolocal.models.Session;
-import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
+import de.app.services.ServiceSession;
+import de.app.model.Session;
 
 import org.springframework.security.core.Authentication;
 

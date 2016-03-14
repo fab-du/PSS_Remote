@@ -1,7 +1,7 @@
 package de.security;
 
-import de.hsmannheim.cryptolocal.models.Session;
-import de.hsmannheim.cryptolocal.repositories.impl.ServiceSession;
+import de.app.services.ServiceSession;
+import de.app.model.Session;
 import io.jsonwebtoken.Jwts; 
 import io.jsonwebtoken.SignatureAlgorithm; 
 import io.jsonwebtoken.Claims;
