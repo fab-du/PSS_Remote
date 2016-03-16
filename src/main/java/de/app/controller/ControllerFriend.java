@@ -37,6 +37,7 @@ public class ControllerFriend {
 	}
 	
 	@RequestMapping( value="/{friendId}/revoke", method=RequestMethod.DELETE )
+	@ResponseStatus(HttpStatus.ACCEPTED)
 	public ResponseEntity<?> revoke(@PathVariable(value="userId") Long userId, @PathVariable(value="friendId") Long friendId){
 		return serviceFriend.revoke(userId, friendId);
 	}

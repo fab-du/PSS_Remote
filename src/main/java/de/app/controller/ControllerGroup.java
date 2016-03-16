@@ -10,11 +10,13 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,6 +63,7 @@ public class ControllerGroup {
 	}
 	
 	@RequestMapping( value="/{groupId}/users/{userId}", method = RequestMethod.POST )
+	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> addUser( @PathVariable(value="groupId") Long groupId, @PathVariable( value="userId") Long userId, @RequestBody KeySym symkey ){
 		return servicegroup.addUser(userId, groupId, symkey);
 	}
@@ -76,6 +79,7 @@ public class ControllerGroup {
 	}
 	
 	@RequestMapping( value="/{groupId}/documents", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId,@RequestParam("file") MultipartFile file ) throws IOException{
 		return servicegroup.addDocument(groupId, file);
 	}

@@ -3,7 +3,6 @@ package de.app.services;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import de.app.repositories.RepositoryFriend;
 import de.app.repositories.RepositoryGroup;
 import de.app.repositories.RepositoryUsers;
 import de.app.model.Friendship;
-import de.app.model.Group;
 import de.app.model.User;
 
 @Service
@@ -107,8 +105,6 @@ public class ServiceFriend {
 		Iterator<Friendship> it =friends.iterator();
 		
 		boolean ret = false;
-		int pos = -1; 
-		
 		Friendship _friendship = null; 
 		
 		while(it.hasNext()){
@@ -133,19 +129,19 @@ public class ServiceFriend {
 	}
 	
 	
-    //@Deprecated
-    //TODO
-	public ResponseEntity<?> addFriendToGroup( Long friendId, Long gvId, Long groupId ){
-		boolean gvExist = repositoryUser.exists(gvId);
-		Group group = repositoryGroup.findOne(groupId);
-		
-		boolean isGv  = group.getGvid().equals(gvId);
-		
-		if( !gvExist || !isGv ) 
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
-		
-		User friend = repositoryUser.findOne( friendId );
-        return null;
-	 //   return serviceGroup.addUser( friend, groupId, );
-	}
+//    //@Deprecated
+//    //TODO
+//	public ResponseEntity<?> addFriendToGroup( Long friendId, Long gvId, Long groupId ){
+//		boolean gvExist = repositoryUser.exists(gvId);
+//		Group group = repositoryGroup.findOne(groupId);
+//		
+//		boolean isGv  = group.getGvid().equals(gvId);
+//		
+//		if( !gvExist || !isGv ) 
+//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+//		
+//		User friend = repositoryUser.findOne( friendId );
+//        return null;
+//	 //   return serviceGroup.addUser( friend, groupId, );
+//	}
 }
