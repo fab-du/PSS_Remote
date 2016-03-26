@@ -7,10 +7,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.tool.hbm2ddl.ForeignKeyMetadata;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import de.app.model.Group;
 
 public class FormNewUserToGroup {
 

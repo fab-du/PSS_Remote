@@ -14,5 +14,5 @@ public interface RepositoryUserGroup extends JpaRepository<UserGroup, Long> {
 	 * @param gvid
 	 * @return List<UserGroup>
 	 */
-	List<UserGroup> findByUseringroupId( Long gvid );
+	List<UserGroup> findByUseringroupId( long gvid );
 }

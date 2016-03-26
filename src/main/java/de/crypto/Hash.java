@@ -7,7 +7,6 @@ import de.helper.Helper;
 
 public class Hash {
 	
-	
 	public String hash( byte[] obj ){
 		MessageDigest md ;
 		
@@ -23,18 +22,9 @@ public class Hash {
 	}
 
 	public boolean checkHash(byte[] obj , String digesta){
-		MessageDigest md ;
-		
 		byte[] _digesta = Helper.decode(digesta);
-		
-		try {
-			md = MessageDigest.getInstance("MD5");
-			byte[] digestb = Helper.decode(this.hash(obj));
-			return MessageDigest.isEqual(_digesta, digestb);
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println(e.getMessage());
-			return false;
-		}
+		byte[] digestb = Helper.decode(this.hash(obj));
+		return MessageDigest.isEqual(_digesta, digestb);
 	}
 	
 }
