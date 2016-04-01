@@ -1,12 +1,21 @@
 package de.app.model.form;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FormAuthentication {
+
+	@NotNull @NotBlank
 	String email;
+	@NotNull @NotBlank
 	String A;
+	@NotNull @NotBlank
 	String M1;
+	@NotNull @NotBlank
 	String spubkey;
 	
 	

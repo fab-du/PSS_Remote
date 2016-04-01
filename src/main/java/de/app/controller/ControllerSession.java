@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -34,7 +35,7 @@ public class ControllerSession {
 	ServiceSession serviceSession;
 
 	@RequestMapping( value="/login/challenge", method = RequestMethod.POST, consumes="application/json" )
-	public ResponseEntity<FormChallengeResponse> login_challenge( @RequestBody Map<String, String> challenge  ) throws Exception{
+	public ResponseEntity<FormChallengeResponse> login_challenge( @Validated @RequestBody Map<String, String> challenge  ) throws Exception{
 	
 	//if user not in system
 	String email = challenge.get("email");
@@ -50,7 +51,7 @@ public class ControllerSession {
 	}
 	
 	@RequestMapping( value="/login/authenticate", method = RequestMethod.POST )
-	public ResponseEntity<FormLoginAuthenticateResponse> login( @RequestBody FormAuthentication authdata) throws Exception{
+	public ResponseEntity<FormLoginAuthenticateResponse> login( @Validated @RequestBody FormAuthentication authdata) throws Exception{
 		return  serviceuser.step2( authdata );
 	}
 

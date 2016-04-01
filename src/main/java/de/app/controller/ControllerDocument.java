@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +34,7 @@ public class ControllerDocument {
 	}
 	
 	@RequestMapping( method=RequestMethod.POST )
-	public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) throws IOException{
+	public ResponseEntity<?> create( @Validated @RequestParam("file") MultipartFile file) throws IOException{
 		System.out.println( file.getOriginalFilename());
 		return servicedoc.create(file);
 	}

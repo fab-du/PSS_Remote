@@ -36,17 +36,17 @@ public class FilterR implements Filter {
 			String headervalue = req.getHeader( headername );
 			System.out.println( headername + "-----" + headervalue);
 		}
-		
-		Hash hash = new Hash();
-		ServletInputStream body = req.getInputStream();
-		BufferedInputStream bis = new BufferedInputStream(body);
-		
-		byte[] b = new byte[ body.available()];
-		
-		bis.read(b);
-		
-		System.out.println( hash.checkHash( b, req.getHeader("hash")) );
-		System.out.println( ((HttpServletRequest)request).getRequestURI());
+//		
+//		Hash hash = new Hash();
+//		ServletInputStream body = req.getInputStream();
+//		BufferedInputStream bis = new BufferedInputStream(body);
+//		
+//		byte[] b = new byte[ body.available()];
+//		
+//		bis.read(b);
+//		
+//		System.out.println( hash.checkHash( b, req.getHeader("hash")) );
+//		System.out.println( ((HttpServletRequest)request).getRequestURI());
 		chain.doFilter(request, response);
 	}
 

@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,7 +53,7 @@ public class ControllerGroup {
 	}
 
 	@RequestMapping( method= RequestMethod.POST )
-	public ResponseEntity<?>  create( @RequestBody Group group){
+	public ResponseEntity<?>  create( @Validated @RequestBody Group group){
 		return servicegroup.create(group, true);
 	}
 
@@ -64,7 +65,7 @@ public class ControllerGroup {
 	
 	@RequestMapping( value="/{groupId}/users/{userId}", method = RequestMethod.POST )
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> addUser( @PathVariable(value="groupId") Long groupId, @PathVariable( value="userId") Long userId, @RequestBody KeySym symkey ){
+	public ResponseEntity<?> addUser( @PathVariable(value="groupId") Long groupId, @PathVariable( value="userId") Long userId, @Validated @RequestBody KeySym symkey ){
 		return servicegroup.addUser(userId, groupId, symkey);
 	}
 	
@@ -80,7 +81,7 @@ public class ControllerGroup {
 	
 	@RequestMapping( value="/{groupId}/documents", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId,@RequestParam("file") MultipartFile file ) throws IOException{
+	public ResponseEntity<?> addDocument( @PathVariable(value="groupId") Long groupId, @Validated @RequestParam("file") MultipartFile file ) throws IOException{
 		return servicegroup.addDocument(groupId, file);
 	}
 	

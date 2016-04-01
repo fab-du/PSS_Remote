@@ -25,11 +25,9 @@ public class ControllerKeyPair {
 	public ResponseEntity<KeyPair>  userpublickey( @PathVariable(value="userId") Long userid ){
 		User user =  repositoryuser.findOne( userid );
 		KeyPair ret = user.getKeypair();
-
 		if(ret != null  ) 
 			return new ResponseEntity<KeyPair>( ret, HttpStatus.OK); 
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 	}
-	
 
 }

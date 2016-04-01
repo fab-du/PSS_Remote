@@ -1,10 +1,9 @@
 package de.app.model.form;
 
 public class FormChallengeResponse {
+
 	String b;
 	String salt; 
-
-	
 	
 	public FormChallengeResponse(String b, String salt) {
 		this.b = b;

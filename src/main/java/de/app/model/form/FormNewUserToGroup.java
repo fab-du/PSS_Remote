@@ -20,6 +20,7 @@ public class FormNewUserToGroup {
 	String passphrase; 
 
 
+	@NotNull @NotEmpty
 	Long groupid;
 	Long gvid;
 

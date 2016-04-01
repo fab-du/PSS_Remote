@@ -3,6 +3,7 @@ package de.app.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class ControllerFriend {
 	
 	@RequestMapping( method=RequestMethod.POST )
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> create( @PathVariable(value="userId") Long userId, @RequestBody Friendship friendship ){
+	public ResponseEntity<?> create( @PathVariable(value="userId") Long userId, @Validated @RequestBody Friendship friendship ){
 		return serviceFriend.create( userId , friendship );
 	}
 	

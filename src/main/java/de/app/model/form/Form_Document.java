@@ -12,7 +12,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class Form_Document {
 
+	@NotNull @NotEmpty
 	Long currentUserId;
+	@NotNull @NotEmpty
 	Long currentGroupId;
 
 	@NotNull @NotEmpty
