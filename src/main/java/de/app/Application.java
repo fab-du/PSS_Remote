@@ -28,6 +28,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
+/**
+ * @author Siyapdje, Fabrice Dufils
+ * RemoteServer Main Class
+ */
 @SpringBootApplication
 @EnableScheduling
 @Controller
@@ -38,31 +42,6 @@ public class Application extends SpringBootServletInitializer{
         return application.sources(Application.class);
     }
 
-	// Match everything without a suffix (so not a static resource)
-	@RequestMapping(value = "/{[path:[^\\.]*}")
-	public String redirect() {
-		// Forward to home page so that route is preserved.
-		return "forward:/";
-	}
-	
-	@RequestMapping(value = "/free")
-	@ResponseBody
-	public Map<String, Object> foo() {
-		// Forward to home page so that route is preserved.
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("content", "authenticate");
-		return model;
-	}
-
-	
-//	@Override
-//	public void onStartup(ServletContext servletContext) throws ServletException {
-//		//servletContext.getSessionCookieConfig().
-//		//servletContext.addFilter(filterName, filterClass)
-//		servletContext.setInitParameter("filter", "");
-//		super.onStartup(servletContext);
-//	}
-	
 	@Configuration
 	@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 	protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
