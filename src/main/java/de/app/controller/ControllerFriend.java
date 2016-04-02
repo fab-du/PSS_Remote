@@ -50,9 +50,5 @@ public class ControllerFriend {
         return null;
 		//return serviceFriend.addFriendToGroup(friendId, userId, groupId);
 	}
-	/**
-	 * 
-	 */
-	
 
 }
