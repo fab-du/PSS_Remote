@@ -7,7 +7,20 @@
 <artifactId>hsmannheim-remoteserver</artifactId>
 <name>RemoteServer</name>
 <description>Remote Server</description>
-	
+<url>https://github.com/fab-du/PSS_Remote</url>
+<licenses>
+	<license>
+		<name>HS Mannheim, Bachelorarbeit</name>
+		<url>https://github.com/fab-du/PSS_Remote</url>
+		<distribution>repo</distribution>
+	</license>
+</licenses>
+
+<organization>
+	<name>HS Mannheim, Fakueltaet fuer Informationstechnik</name>
+	<url>http://www.inftech.hs-mannheim.de </url>
+</organization>
+
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -160,5 +173,24 @@
         </plugin>
     </plugins>
 </build>
+
+<reporting>
+<plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+        </configuration>
+      </plugin>
+  <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jxr-plugin</artifactId>
+	<version>2.1</version>
+  </plugin>
+</plugins>
+</reporting>
 
 </project>
